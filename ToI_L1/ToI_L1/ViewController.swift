@@ -69,13 +69,73 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         mx.forEach { (charArray) in
             print(charArray)
-        }
-        
-        mx.forEach { (charArray) in
             for i in 0...charArray.count-1 {
-                if engAlphabet.contains(charArray[i].unicodeScalars.first!) {
+                if engAlphabet.contains(charArray[i].unicodeScalars.first!){
                     newStr.append(charArray[i])
                 }
+            }
+        }
+        
+        return newStr
+    }
+    
+    private func railwayDecryption(str: String, key: Int) -> String {
+        var newStr: String = ""
+        let matrixLength: Int = str.count
+        let undefinedSymbol: Character = "?"
+        var mx: [[Character]] = Array(repeating: Array(repeating: " ", count: matrixLength), count: key)
+        
+        var iOffset: Int = 0
+        var di: Int = 1
+        for j in 0...matrixLength-1 {
+            mx[iOffset][j] = undefinedSymbol
+            if key>1 {
+                switch iOffset {
+                case 0:
+                    di = 1
+                case (key-1):
+                    di = -1
+                default:
+                    break
+                }
+                iOffset = iOffset + di
+            }
+        }
+        
+        print()
+        mx.forEach { (charArray) in
+            print(charArray)
+        }
+        
+        var currentSymbol: Int = 0
+        for i in 0...mx.count-1 {
+            for j in 0...matrixLength-1 {
+                if mx[i][j]==undefinedSymbol {
+                    mx[i][j] = str[str.index(str.startIndex, offsetBy: currentSymbol)]
+                    currentSymbol = currentSymbol + 1
+                }
+            }
+        }
+        
+        print()
+        mx.forEach { (charArray) in
+            print(charArray)
+        }
+        
+        iOffset = 0
+        di = 1
+        for j in 0...matrixLength-1 {
+            newStr.append(mx[iOffset][j])
+            if key>1 {
+                switch iOffset {
+                case 0:
+                    di = 1
+                case (key-1):
+                    di = -1
+                default:
+                    break
+                }
+                iOffset = iOffset + di
             }
         }
         
@@ -88,7 +148,19 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return newStr
     }
     
+    private func vigenereDecryption(str: String, key: String) -> String {
+        var newStr: String = str
+        
+        return newStr
+    }
+    
     private func playfairEncryption(str: String, key: String) -> String {
+        var newStr: String = str
+        
+        return newStr
+    }
+    
+    private func playfairDecryption(str: String, key: String) -> String {
         var newStr: String = str
         
         return newStr
@@ -145,7 +217,39 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     @IBAction func decryptAction(_ sender: Any){
-        resultTextField.stringValue = "Anime!"
+        var str: String = inputTextField.stringValue
+        let encType: String = encTypesPopUpButton.title
+        var key: String = keyTextField.stringValue
+        print("Decrypting msg: \(str)")
+        print("Decryption type: \(encType)")
+        print("Key: \(key)")
+        
+        let result: String
+        switch encType {
+        case encTypes[0]:
+            if checkRailwayKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                str = normalizedEnString(str: str)
+                inputTextField.stringValue = str
+                if !str.isEmpty {
+                    result = railwayDecryption(str: str, key: Int(key)!)
+                } else {
+                    result = ""
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
+        case encTypes[1]:
+            result = vigenereDecryption(str: str, key: key)
+        case encTypes[2]:
+            result = playfairDecryption(str: str, key: key)
+        default:
+            result = "> Invalid encryption type!"
+        }
+        
+        resultTextField.stringValue = result
     }
     
     
