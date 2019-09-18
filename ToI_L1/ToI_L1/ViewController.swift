@@ -256,6 +256,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         keyTextField.delegate = self
+        resultTextField.delegate = self
         prepareUI()
     }
     
@@ -266,11 +267,19 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     func controlTextDidChange(_ obj: Notification) {
         let textField = obj.object as? NSTextField
-        if textField?.identifier == keyTextField.identifier {
-            keyTextField.textColor = .white
+        if textField?.identifier != nil {
+            switch textField?.identifier {
+            case keyTextField.identifier:
+                keyTextField.textColor = .white
+            case resultTextField.identifier:
+                resultTextField.abortEditing()
+            default:
+                break
+            }
         }
     }
 
+    
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.

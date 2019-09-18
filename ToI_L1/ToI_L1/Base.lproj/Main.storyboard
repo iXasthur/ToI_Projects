@@ -485,10 +485,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bV1-Lv-g30">
-                                <rect key="frame" x="189" y="138" width="351" height="78"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="78" id="QtS-ws-IKI"/>
-                                </constraints>
+                                <rect key="frame" x="189" y="126" width="351" height="90"/>
                                 <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="left" placeholderString="Result preview" drawsBackground="YES" id="9y1-4q-Wpm">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -544,6 +541,7 @@
                             <constraint firstItem="Owo-UB-ELx" firstAttribute="trailing" secondItem="DsH-SY-tF2" secondAttribute="trailing" id="X2X-Ne-cJc"/>
                             <constraint firstItem="a1y-A5-YA8" firstAttribute="leading" secondItem="ews-l9-M9q" secondAttribute="leading" id="cJM-Jr-AfC"/>
                             <constraint firstItem="Owo-UB-ELx" firstAttribute="baseline" secondItem="ews-l9-M9q" secondAttribute="firstBaseline" id="cq4-YB-sQp"/>
+                            <constraint firstItem="bV1-Lv-g30" firstAttribute="height" secondItem="Owo-UB-ELx" secondAttribute="height" id="g5l-W4-4lH"/>
                             <constraint firstItem="qvk-6E-aN1" firstAttribute="leading" secondItem="a1y-A5-YA8" secondAttribute="leading" id="g8G-NU-y52"/>
                             <constraint firstItem="bV1-Lv-g30" firstAttribute="top" secondItem="DsH-SY-tF2" secondAttribute="bottom" constant="33" id="gbv-Zd-okb"/>
                             <constraint firstItem="ews-l9-M9q" firstAttribute="trailing" secondItem="UCb-pB-hc3" secondAttribute="trailing" id="jBS-cq-QBz"/>
