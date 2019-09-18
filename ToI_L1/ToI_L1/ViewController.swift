@@ -28,7 +28,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     private func checkRailwayKey(key: inout String) -> Bool{
         var result: Bool = false
-//        key = key.lowercased().components(separatedBy: digitsAlphabet.inverted).joined()
         key = key.lowercased().filter{digitsAlphabetString.contains($0)}
         
         if !key.isEmpty && Int(key) ?? 0 > 0 {
@@ -40,7 +39,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     private func checkVigenereKey(key: inout String) -> Bool{
         var result: Bool = false
-//        key = key.lowercased().components(separatedBy: ruAlphabet.inverted).joined()
         key = key.lowercased().filter{ruAlphabetString.contains($0)}
         
         if !key.isEmpty {
@@ -51,12 +49,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     private func normalizedEnString(str: String) -> String{
-//        return str.lowercased().components(separatedBy: engAlphabet.inverted).joined()
         return str.lowercased().filter{enAlphabetString.contains($0)}
     }
     
     private func normalizedRuString(str: String) -> String{
-//        return str.lowercased().components(separatedBy: ruAlphabet.inverted).joined()
         return str.lowercased().filter{ruAlphabetString.contains($0)}
     }
     
@@ -85,9 +81,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         mx.forEach { (charArray) in
             print(charArray)
             for i in 0...charArray.count-1 {
-//                if engAlphabet.contains(charArray[i].unicodeScalars.first!){
-//                    newStr.append(charArray[i])
-//                }
                 if enAlphabetString.contains(charArray[i]) {
                     newStr.append(charArray[i])
                 }
@@ -231,7 +224,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         print("С: \(newStr)")
         
         return newStr
-
     }
     
     private func vigenereEncryption(str: String, key: String) -> String {
