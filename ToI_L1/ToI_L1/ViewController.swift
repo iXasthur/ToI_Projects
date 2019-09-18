@@ -28,7 +28,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     private func checkRailwayKey(key: inout String) -> Bool{
         var result: Bool = false
-        key = key.lowercased().components(separatedBy: digitsAlphabet.inverted).joined()
+//        key = key.lowercased().components(separatedBy: digitsAlphabet.inverted).joined()
+        key = key.lowercased().filter{digitsAlphabetString.contains($0)}
         
         if !key.isEmpty && Int(key) ?? 0 > 0 {
             result = true
@@ -37,12 +38,26 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return result
     }
     
+    private func checkVigenereKey(key: inout String) -> Bool{
+        var result: Bool = false
+//        key = key.lowercased().components(separatedBy: ruAlphabet.inverted).joined()
+        key = key.lowercased().filter{ruAlphabetString.contains($0)}
+        
+        if !key.isEmpty {
+            result = true
+        }
+        
+        return result
+    }
+    
     private func normalizedEnString(str: String) -> String{
-        return str.lowercased().components(separatedBy: engAlphabet.inverted).joined()
+//        return str.lowercased().components(separatedBy: engAlphabet.inverted).joined()
+        return str.lowercased().filter{enAlphabetString.contains($0)}
     }
     
     private func normalizedRuString(str: String) -> String{
-        return str.lowercased().components(separatedBy: ruAlphabet.inverted).joined()
+//        return str.lowercased().components(separatedBy: ruAlphabet.inverted).joined()
+        return str.lowercased().filter{ruAlphabetString.contains($0)}
     }
     
     private func railwayEncryption(str: String, key: Int) -> String {
@@ -70,7 +85,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         mx.forEach { (charArray) in
             print(charArray)
             for i in 0...charArray.count-1 {
-                if engAlphabet.contains(charArray[i].unicodeScalars.first!){
+//                if engAlphabet.contains(charArray[i].unicodeScalars.first!){
+//                    newStr.append(charArray[i])
+//                }
+                if enAlphabetString.contains(charArray[i]) {
                     newStr.append(charArray[i])
                 }
             }
@@ -142,16 +160,86 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return newStr
     }
     
-    private func vigenereEncryption(str: String, key: String) -> String {
-        var newStr: String = str
+    private func shiftCharacter(c: Character, count: Int) -> Character? {
+        let newChar: Character?
+        
+        if ruAlphabetString.contains(c) {
+            let pos: String.Index = ruAlphabetString.firstIndex(of: c)!
+            var newPos: String.Index = ruAlphabetString.index(pos, offsetBy: count)
+            let endPos: String.Index = ruAlphabetString.index(ruAlphabetString.endIndex, offsetBy: -1)
+            
+            if newPos > endPos {
+                var i: Int = 0
+                i = ruAlphabetString.distance(from: endPos, to: newPos)
+                newPos = ruAlphabetString.index(ruAlphabetString.startIndex, offsetBy: i-1)
+            }
+            
+            newChar = ruAlphabetString[newPos]
+        } else
+            if enAlphabetString.contains(c) {
+                newChar = nil
+            } else {
+                newChar = nil
+            }
+        
+        return newChar
+    }
+    
+    private func pos(c: Character ,s: String) -> Int? {
+        guard let i: String.Index = s.firstIndex(of: c) else {
+            return nil
+        }
+        
+        return s.distance(from: s.startIndex, to: i)
+    }
+    
+    private func getNextVigenereProgressiveKeyPart(k: String) -> String {
+        var newKey: String = ""
+        for i in 0...k.count-1 {
+            newKey.append(shiftCharacter(c: k[k.index(k.startIndex, offsetBy: i)], count: 1)!)
+        }
+        return newKey
+    }
+    
+    private func vigenereAlgorythm(encrypt: Bool, str: String, key: String) -> String {
+        var newStr: String = ""
+        var newKey: String = key
+        var nextKey: String = key
+        while newKey.count < str.count {
+            nextKey = getNextVigenereProgressiveKeyPart(k: nextKey)
+            newKey = newKey + nextKey
+        }
+        newKey.removeLast(newKey.count - str.count)
+        
+        var index: Int
+        for i in 0...str.count-1 {
+            let a: Int = pos(c: str[str.index(str.startIndex, offsetBy: i)], s: ruAlphabetString)!
+            let b: Int = pos(c: newKey[newKey.index(newKey.startIndex, offsetBy: i)], s: ruAlphabetString)!
+            if encrypt {
+                index = (a+b) % ruAlphabetString.count
+            } else {
+                index = a-b
+                if index < 0 {
+                    index += ruAlphabetString.count
+                }
+            }
+            newStr.append(ruAlphabetString[ruAlphabetString.index(ruAlphabetString.startIndex, offsetBy: index)])
+        }
+        
+        print("M: \(str)")
+        print("K: \(newKey)")
+        print("С: \(newStr)")
         
         return newStr
+
+    }
+    
+    private func vigenereEncryption(str: String, key: String) -> String {
+        return vigenereAlgorythm(encrypt: true, str: str, key: key)
     }
     
     private func vigenereDecryption(str: String, key: String) -> String {
-        var newStr: String = str
-        
-        return newStr
+        return vigenereAlgorythm(encrypt: false, str: str, key: key)
     }
     
     private func playfairEncryption(str: String, key: String) -> String {
@@ -166,9 +254,13 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return newStr
     }
     
-    private let digitsAlphabet: CharacterSet = CharacterSet.init(charactersIn: "0"..."9")
-    private let ruAlphabet: CharacterSet = CharacterSet.init(charactersIn: "а"..."я")
-    private let engAlphabet: CharacterSet = CharacterSet.init(charactersIn: "a"..."z")
+    
+//    private let digitsAlphabet: CharacterSet = CharacterSet.init(charactersIn: "0"..."9")
+//    private let ruAlphabet: CharacterSet = CharacterSet.init(charactersIn: "а"..."я")
+//    private let engAlphabet: CharacterSet = CharacterSet.init(charactersIn: "a"..."z")
+    private let digitsAlphabetString: String = "0123456789"
+    private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+    private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
     private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)"]
     
     @IBOutlet weak var encTypesPopUpButton: NSPopUpButton!
@@ -206,7 +298,20 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 result = ""
             }
         case encTypes[1]:
-            result = vigenereEncryption(str: str, key: key)
+            if checkVigenereKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                str = normalizedRuString(str: str)
+                inputTextField.stringValue = str
+                if !str.isEmpty {
+                    result = vigenereEncryption(str: str, key: key)
+                } else {
+                    result = ""
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
         case encTypes[2]:
             result = playfairEncryption(str: str, key: key)
         default:
@@ -242,7 +347,20 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 result = ""
             }
         case encTypes[1]:
-            result = vigenereDecryption(str: str, key: key)
+            if checkVigenereKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                str = normalizedRuString(str: str)
+                inputTextField.stringValue = str
+                if !str.isEmpty {
+                    result = vigenereDecryption(str: str, key: key)
+                } else {
+                    result = ""
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
         case encTypes[2]:
             result = playfairDecryption(str: str, key: key)
         default:
@@ -257,12 +375,15 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         super.viewDidLoad()
         keyTextField.delegate = self
         resultTextField.delegate = self
+        
         prepareUI()
     }
     
     private func prepareUI(){
         encTypesPopUpButton.removeAllItems()
         encTypesPopUpButton.addItems(withTitles: encTypes)
+        
+        encTypesPopUpButton.selectItem(at: 1)
     }
     
     func controlTextDidChange(_ obj: Notification) {
