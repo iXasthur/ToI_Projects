@@ -211,10 +211,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             if encrypt {
                 index = (a+b) % ruAlphabetString.count
             } else {
-                index = a-b
-                if index < 0 {
-                    index += ruAlphabetString.count
-                }
+//                index = a-b
+//                if index < 0 {
+//                    index += ruAlphabetString.count
+//                }
+                index = (a-b+ruAlphabetString.count) % ruAlphabetString.count
             }
             newStr.append(ruAlphabetString[ruAlphabetString.index(ruAlphabetString.startIndex, offsetBy: index)])
         }
