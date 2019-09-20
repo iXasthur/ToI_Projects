@@ -521,8 +521,20 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         encTypesPopUpButton.removeAllItems()
         encTypesPopUpButton.addItems(withTitles: encTypes)
         
-        encTypesPopUpButton.selectItem(at: 2)
+        encTypesPopUpButton.selectItem(at: 0)
     }
+    
+    @IBAction func encTypesPopUpButtonSelectionDidChange(_ sender: NSPopUpButton) {
+        inputTextField.stringValue = ""
+        if encTypesPopUpButton.indexOfSelectedItem == 2 {
+            keyTextField.stringValue = "cryptography"
+            keyTextField.textColor = .white
+        } else {
+            keyTextField.stringValue = ""
+            keyTextField.textColor = .white
+        }
+        resultTextField.stringValue = ""
+    }  
     
     func controlTextDidChange(_ obj: Notification) {
         let textField = obj.object as? NSTextField
@@ -538,7 +550,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
     }
 
-    
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.

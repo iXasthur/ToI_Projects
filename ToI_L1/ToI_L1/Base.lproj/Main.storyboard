@@ -508,6 +508,9 @@
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
+                                <connections>
+                                    <action selector="encTypesPopUpButtonSelectionDidChange:" target="XfG-lQ-9wD" id="2nO-L1-t2A"/>
+                                </connections>
                             </popUpButton>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a1y-A5-YA8">
                                 <rect key="frame" x="33" y="320" width="134" height="24"/>
