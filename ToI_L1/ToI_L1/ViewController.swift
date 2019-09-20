@@ -249,6 +249,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private func playfairAlgorythm(encrypt: Bool, str: String, key: String) -> String {
         var newStr: String = ""
         var newKey: String = ""
+        var pairs: [[Character]] = []
         
         var normalizedAlphabetStr: String = enAlphabetString.replacingOccurrences(of: "j", with: "")
         let normalizedInputStr: String = str.replacingOccurrences(of: "j", with: "i")
@@ -288,7 +289,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 pair.append(normalizedInputStr[nextIndex])
             }
             
-            if pair[0] == pair[1] {
+            if pair[0] == pair[1] && encrypt {
                 pair[1] = "x"
                 nextPairStartIndex = nextIndex
             } else {
@@ -334,8 +335,27 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             pair[0] = mx[pairPos[0]["i"]!][pairPos[0]["j"]!]
             pair[1] = mx[pairPos[1]["i"]!][pairPos[1]["j"]!]
             
-            newStr.append(pair[0])
-            newStr.append(pair[1])
+//            newStr.append(pair[0])
+//            newStr.append(pair[1])
+            pairs.append(pair)
+        }
+        
+        if encrypt {
+            pairs.forEach { (pair) in
+                newStr.append(pair[0])
+                newStr.append(pair[1])
+            }
+        } else {
+            for i in 0...pairs.count-2 {
+                if pairs[i][0] == pairs[i+1][0] && pairs[i][1] == "x" {
+                    newStr.append(pairs[i][0])
+                } else {
+                    newStr.append(pairs[i][0])
+                    newStr.append(pairs[i][1])
+                }
+            }
+            newStr.append(pairs[pairs.count-1][0])
+            newStr.append(pairs[pairs.count-1][1])
         }
         
         return newStr
@@ -350,9 +370,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     
-//    private let digitsAlphabet: CharacterSet = CharacterSet.init(charactersIn: "0"..."9")
-//    private let ruAlphabet: CharacterSet = CharacterSet.init(charactersIn: "а"..."я")
-//    private let engAlphabet: CharacterSet = CharacterSet.init(charactersIn: "a"..."z")
     private let digitsAlphabetString: String = "0123456789"
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
