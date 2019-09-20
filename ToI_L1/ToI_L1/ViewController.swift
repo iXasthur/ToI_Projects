@@ -48,6 +48,17 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return result
     }
     
+    private func checkPlayfairKey(key: inout String) -> Bool{
+        var result: Bool = false
+        key = key.lowercased().filter{enAlphabetString.contains($0)}
+        
+        if !key.isEmpty {
+            result = true
+        }
+        
+        return result
+    }
+    
     private func normalizedEnString(str: String) -> String{
         return str.lowercased().filter{enAlphabetString.contains($0)}
     }
@@ -235,16 +246,107 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return vigenereAlgorythm(encrypt: false, str: str, key: key)
     }
     
-    private func playfairEncryption(str: String, key: String) -> String {
-        var newStr: String = str
+    private func playfairAlgorythm(encrypt: Bool, str: String, key: String) -> String {
+        var newStr: String = ""
+        var newKey: String = ""
+        
+        var normalizedAlphabetStr: String = enAlphabetString.replacingOccurrences(of: "j", with: "")
+        let normalizedInputStr: String = str.replacingOccurrences(of: "j", with: "i")
+        let normalizedInputKey: String = key.replacingOccurrences(of: "j", with: "i")
+        
+        let mxSize: Int = 5
+        var mx: [[Character]] = Array(repeating: Array(repeating: "?", count: mxSize), count: mxSize)
+        normalizedInputKey.forEach { (c) in
+            if !newKey.contains(c) {
+                newKey.append(c)
+                normalizedAlphabetStr.remove(at: normalizedAlphabetStr.firstIndex(of: c)!)
+            }
+        }
+        
+        newKey = newKey + normalizedAlphabetStr
+        for i in 0...mxSize-1 {
+            for j in 0...mxSize-1 {
+                mx[i][j] = newKey[newKey.index(newKey.startIndex, offsetBy: i*mxSize + j)]
+            }
+        }
+        
+        mx.forEach { (charArray) in
+            print(charArray)
+        }
+        
+        var nextPairStartIndex: String.Index = normalizedInputStr.startIndex
+        let lastSymbolIndex: String.Index = normalizedInputStr.index(normalizedInputStr.endIndex, offsetBy: -1)
+        while nextPairStartIndex <= lastSymbolIndex {
+            var pair: [Character] = []
+            var pairPos: [[Character:Int]] = []
+            pair.append(normalizedInputStr[nextPairStartIndex])
+            
+            let nextIndex: String.Index = normalizedInputStr.index(nextPairStartIndex, offsetBy: 1)
+            if nextPairStartIndex == lastSymbolIndex {
+                pair.append("x")
+            } else {
+                pair.append(normalizedInputStr[nextIndex])
+            }
+            
+            if pair[0] == pair[1] {
+                pair[1] = "x"
+                nextPairStartIndex = nextIndex
+            } else {
+                if nextIndex != normalizedInputStr.endIndex {
+                    nextPairStartIndex = normalizedInputStr.index(nextIndex, offsetBy: 1)
+                } else {
+                    nextPairStartIndex = nextIndex
+                }
+            }
+            
+            pair.forEach { (c) in
+                let p: Int = pos(c: c, s: newKey)!
+                var IJPos: [Character:Int] = [:]
+                IJPos.updateValue(p/mxSize, forKey: "i")
+                IJPos.updateValue(p%mxSize, forKey: "j")
+//                IJPos.append(p/mxSize)
+//                IJPos.append(p%mxSize)
+                pairPos.append(IJPos)
+            }
+            
+            print(pair,"[",pairPos[0]["i"]!,pairPos[0]["j"]!,"] [",pairPos[1]["i"]!,pairPos[1]["j"]!,"]")
+            
+            let shiftValue: Int
+            if encrypt {
+                shiftValue = 1
+            } else {
+                shiftValue = mxSize - 1
+            }
+            
+            if pairPos[0]["j"] == pairPos[1]["j"] {
+                pairPos[0]["i"] = (pairPos[0]["i"]! + shiftValue) % mxSize
+                pairPos[1]["i"] = (pairPos[1]["i"]! + shiftValue) % mxSize
+            } else
+                if pairPos[0]["i"] == pairPos[1]["i"] {
+                    pairPos[0]["j"] = (pairPos[0]["j"]! + shiftValue) % mxSize
+                    pairPos[1]["j"] = (pairPos[1]["j"]! + shiftValue) % mxSize
+                } else {
+                    let buff: Int = pairPos[0]["j"]!
+                    pairPos[0]["j"] = pairPos[1]["j"]
+                    pairPos[1]["j"] = buff
+                }
+            
+            pair[0] = mx[pairPos[0]["i"]!][pairPos[0]["j"]!]
+            pair[1] = mx[pairPos[1]["i"]!][pairPos[1]["j"]!]
+            
+            newStr.append(pair[0])
+            newStr.append(pair[1])
+        }
         
         return newStr
     }
     
+    private func playfairEncryption(str: String, key: String) -> String {
+        return playfairAlgorythm(encrypt: true, str: str, key: key)
+    }
+    
     private func playfairDecryption(str: String, key: String) -> String {
-        var newStr: String = str
-        
-        return newStr
+        return playfairAlgorythm(encrypt: false, str: str, key: key)
     }
     
     
@@ -306,7 +408,20 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 result = ""
             }
         case encTypes[2]:
-            result = playfairEncryption(str: str, key: key)
+            if checkPlayfairKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                str = normalizedEnString(str: str)
+                inputTextField.stringValue = str
+                if !str.isEmpty {
+                    result = playfairEncryption(str: str, key: key)
+                } else {
+                    result = ""
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
         default:
             result = "> Invalid encryption type!"
         }
@@ -355,7 +470,20 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 result = ""
             }
         case encTypes[2]:
-            result = playfairDecryption(str: str, key: key)
+            if checkPlayfairKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                str = normalizedEnString(str: str)
+                inputTextField.stringValue = str
+                if !str.isEmpty {
+                    result = playfairDecryption(str: str, key: key)
+                } else {
+                    result = ""
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
         default:
             result = "> Invalid encryption type!"
         }
@@ -376,7 +504,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         encTypesPopUpButton.removeAllItems()
         encTypesPopUpButton.addItems(withTitles: encTypes)
         
-        encTypesPopUpButton.selectItem(at: 1)
+        encTypesPopUpButton.selectItem(at: 2)
     }
     
     func controlTextDidChange(_ obj: Notification) {
