@@ -377,6 +377,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private var lastDirectoryURL: URL? = nil
     private var lastFileName: String? = nil
     
+    @IBOutlet weak var encryptButton: NSButton!
+    @IBOutlet weak var decryptButton: NSButton!
+    
     @IBOutlet weak var encTypesPopUpButton: NSPopUpButton!
     @IBOutlet weak var saveToFileCheckBox: NSButton!
     
@@ -477,7 +480,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         resultTextField.stringValue = result
         
-        if saveToFileCheckBox.state == .on && !str.isEmpty {
+        if saveToFileCheckBox.state == .on {
             let affix: String = "_enc(" + String(encType[encType.index(encType.startIndex, offsetBy: 0)]) + ")"
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension("txt")
             
@@ -550,7 +553,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         resultTextField.stringValue = result
         
-        if saveToFileCheckBox.state == .on && !str.isEmpty {
+        if saveToFileCheckBox.state == .on {
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+"_dcr").appendingPathExtension("txt")
             
             do {
@@ -575,6 +578,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         encTypesPopUpButton.addItems(withTitles: encTypes)
         
         encTypesPopUpButton.selectItem(at: 0)
+        
+        encryptButton.isEnabled = false
+        decryptButton.isEnabled = false
     }
     
     @IBAction func encTypesPopUpButtonSelectionDidChange(_ sender: NSPopUpButton) {
@@ -582,9 +588,13 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         if encTypesPopUpButton.indexOfSelectedItem == 2 {
             keyTextField.stringValue = "cryptography"
             keyTextField.textColor = .white
+            encryptButton.isEnabled = true
+            decryptButton.isEnabled = true
         } else {
             keyTextField.stringValue = ""
             keyTextField.textColor = .white
+            encryptButton.isEnabled = false
+            decryptButton.isEnabled = false
         }
         resultTextField.stringValue = ""
     }  
@@ -596,7 +606,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             case keyTextField.identifier:
                 keyTextField.textColor = .white
                 if keyTextField.stringValue.isEmpty {
-                    
+                    encryptButton.isEnabled = false
+                    decryptButton.isEnabled = false
+                } else {
+                    encryptButton.isEnabled = true
+                    decryptButton.isEnabled = true
                 }
             case resultTextField.identifier:
                 resultTextField.abortEditing()

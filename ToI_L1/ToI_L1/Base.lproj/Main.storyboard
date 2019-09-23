@@ -560,7 +560,9 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="decryptButton" destination="UCb-pB-hc3" id="tLs-K7-pe0"/>
                         <outlet property="encTypesPopUpButton" destination="qvk-6E-aN1" id="cyA-qo-gwT"/>
+                        <outlet property="encryptButton" destination="ews-l9-M9q" id="bdG-Yi-sPC"/>
                         <outlet property="fileLabel" destination="xRI-CT-CfR" id="Bx3-v1-aAo"/>
                         <outlet property="inputTextField" destination="Owo-UB-ELx" id="gnK-iO-2Vb"/>
                         <outlet property="keyTextField" destination="DsH-SY-tF2" id="SmG-Ui-EGG"/>
