@@ -374,6 +374,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
     private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)"]
+    private var lastDirectoryURL: URL? = nil
+    private var lastFileName: String? = nil
     
     @IBOutlet weak var encTypesPopUpButton: NSPopUpButton!
     @IBOutlet weak var saveToFileCheckBox: NSButton!
@@ -383,6 +385,36 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     @IBOutlet weak var inputTextField: NSTextField!
     @IBOutlet weak var keyTextField: NSTextField!
     @IBOutlet weak var resultTextField: NSTextField!
+    
+    @IBAction func openDocument(_ sender: Any) {
+        print("Opening document")
+        let dialog: NSOpenPanel = NSOpenPanel()
+        dialog.title = "Choose file to encrypt"
+        dialog.canChooseFiles = true
+        dialog.canChooseDirectories = false
+        dialog.allowsMultipleSelection = false
+        
+        if dialog.runModal() == .OK {
+            if dialog.url != nil {
+                let ext = dialog.url?.pathExtension
+                lastDirectoryURL = dialog.directoryURL
+                lastFileName = dialog.url?.deletingPathExtension().lastPathComponent
+                
+                do {
+                    inputTextField.stringValue = try String(contentsOf: dialog.url!)
+                } catch _ {
+                    print("Error opening file")
+                }
+                
+                fileLabel.stringValue = "File: " + lastFileName! + "." + ext!
+                
+                saveToFileCheckBox.isEnabled = true
+            } else {
+                print("Error opening file")
+            }
+        }
+        
+    }
     
     @IBAction func encryptAction(_ sender: Any){
         var str: String = inputTextField.stringValue
@@ -444,6 +476,17 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
         
         resultTextField.stringValue = result
+        
+        if saveToFileCheckBox.state == .on && !str.isEmpty {
+            let affix: String = "_enc(" + String(encType[encType.index(encType.startIndex, offsetBy: 0)]) + ")"
+            let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension("txt")
+            
+            do {
+                try result.write(to: url, atomically: true, encoding: .utf8)
+            } catch let err {
+               print(err)
+            }
+        }
     }
     
     @IBAction func decryptAction(_ sender: Any){
@@ -506,6 +549,16 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
         
         resultTextField.stringValue = result
+        
+        if saveToFileCheckBox.state == .on && !str.isEmpty {
+            let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+"_dcr").appendingPathExtension("txt")
+            
+            do {
+                try result.write(to: url, atomically: true, encoding: .utf8)
+            } catch let err {
+                print(err)
+            }
+        }
     }
     
     
@@ -525,7 +578,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     @IBAction func encTypesPopUpButtonSelectionDidChange(_ sender: NSPopUpButton) {
-        inputTextField.stringValue = ""
+//        inputTextField.stringValue = ""
         if encTypesPopUpButton.indexOfSelectedItem == 2 {
             keyTextField.stringValue = "cryptography"
             keyTextField.textColor = .white
@@ -542,6 +595,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             switch textField?.identifier {
             case keyTextField.identifier:
                 keyTextField.textColor = .white
+                if keyTextField.stringValue.isEmpty {
+                    
+                }
             case resultTextField.identifier:
                 resultTextField.abortEditing()
             default:
