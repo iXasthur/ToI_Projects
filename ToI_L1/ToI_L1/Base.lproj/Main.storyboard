@@ -485,8 +485,8 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bV1-Lv-g30">
-                                <rect key="frame" x="189" y="134" width="351" height="90"/>
+                            <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bV1-Lv-g30">
+                                <rect key="frame" x="189" y="81" width="351" height="90"/>
                                 <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="left" placeholderString="Result preview" drawsBackground="YES" id="9y1-4q-Wpm">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -532,7 +532,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R7p-Tm-pUa">
-                                <rect key="frame" x="189" y="221" width="351" height="21"/>
+                                <rect key="frame" x="189" y="219" width="351" height="21"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="LFSR_KEY2" drawsBackground="YES" id="S11-uJ-2tr">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -540,13 +540,20 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aeV-qT-gup">
-                                <rect key="frame" x="189" y="193" width="351" height="21"/>
+                                <rect key="frame" x="189" y="189" width="351" height="21"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="LFSR_KEY3" drawsBackground="YES" id="ev5-L9-5Yc">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JmK-6M-oCM">
+                                <rect key="frame" x="29" y="212" width="142" height="32"/>
+                                <buttonCell key="cell" type="push" title="Details" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GKz-OU-Bh2">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="qvk-6E-aN1" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="35" id="0zc-kP-iTC"/>
@@ -559,8 +566,9 @@
                             <constraint firstItem="UCb-pB-hc3" firstAttribute="top" secondItem="ews-l9-M9q" secondAttribute="bottom" constant="9" id="GAA-Ya-hTw"/>
                             <constraint firstItem="DsH-SY-tF2" firstAttribute="trailing" secondItem="bV1-Lv-g30" secondAttribute="trailing" id="IEm-q1-RLj"/>
                             <constraint firstItem="R7p-Tm-pUa" firstAttribute="width" secondItem="DsH-SY-tF2" secondAttribute="width" id="KcG-EU-QBF"/>
-                            <constraint firstItem="aeV-qT-gup" firstAttribute="top" secondItem="R7p-Tm-pUa" secondAttribute="bottom" constant="7" id="NoB-0p-cwM"/>
-                            <constraint firstItem="R7p-Tm-pUa" firstAttribute="top" secondItem="DsH-SY-tF2" secondAttribute="bottom" constant="7" id="R3n-tV-o6Q"/>
+                            <constraint firstItem="aeV-qT-gup" firstAttribute="top" secondItem="R7p-Tm-pUa" secondAttribute="bottom" constant="9" id="NoB-0p-cwM"/>
+                            <constraint firstItem="JmK-6M-oCM" firstAttribute="leading" secondItem="UCb-pB-hc3" secondAttribute="leading" id="Omg-a0-nrR"/>
+                            <constraint firstItem="R7p-Tm-pUa" firstAttribute="top" secondItem="DsH-SY-tF2" secondAttribute="bottom" constant="9" id="R3n-tV-o6Q"/>
                             <constraint firstItem="ews-l9-M9q" firstAttribute="leading" secondItem="UCb-pB-hc3" secondAttribute="leading" id="Txq-KT-gu5"/>
                             <constraint firstItem="qvk-6E-aN1" firstAttribute="baseline" secondItem="Owo-UB-ELx" secondAttribute="firstBaseline" id="U4m-SP-kgh"/>
                             <constraint firstItem="Owo-UB-ELx" firstAttribute="trailing" secondItem="DsH-SY-tF2" secondAttribute="trailing" id="X2X-Ne-cJc"/>
@@ -569,10 +577,12 @@
                             <constraint firstItem="aeV-qT-gup" firstAttribute="leading" secondItem="R7p-Tm-pUa" secondAttribute="leading" id="dia-Ra-zyt"/>
                             <constraint firstItem="bV1-Lv-g30" firstAttribute="height" secondItem="Owo-UB-ELx" secondAttribute="height" id="g5l-W4-4lH"/>
                             <constraint firstItem="qvk-6E-aN1" firstAttribute="leading" secondItem="a1y-A5-YA8" secondAttribute="leading" id="g8G-NU-y52"/>
-                            <constraint firstItem="bV1-Lv-g30" firstAttribute="top" secondItem="DsH-SY-tF2" secondAttribute="bottom" constant="25" identifier="ResultYOffsetConstraint" id="gbv-Zd-okb"/>
+                            <constraint firstItem="bV1-Lv-g30" firstAttribute="top" secondItem="DsH-SY-tF2" secondAttribute="bottom" constant="18" identifier="ResultYOffsetConstraint" id="gbv-Zd-okb"/>
                             <constraint firstItem="ews-l9-M9q" firstAttribute="trailing" secondItem="UCb-pB-hc3" secondAttribute="trailing" id="jBS-cq-QBz"/>
                             <constraint firstItem="qvk-6E-aN1" firstAttribute="trailing" secondItem="a1y-A5-YA8" secondAttribute="trailing" id="m2s-iO-n6g"/>
                             <constraint firstItem="ews-l9-M9q" firstAttribute="top" secondItem="a1y-A5-YA8" secondAttribute="bottom" constant="22" id="m7t-Rp-SSs"/>
+                            <constraint firstItem="JmK-6M-oCM" firstAttribute="top" secondItem="UCb-pB-hc3" secondAttribute="bottom" constant="9" id="mQr-hS-R1k"/>
+                            <constraint firstItem="JmK-6M-oCM" firstAttribute="width" secondItem="UCb-pB-hc3" secondAttribute="width" id="nxz-89-hgw"/>
                             <constraint firstItem="Owo-UB-ELx" firstAttribute="leading" secondItem="qvk-6E-aN1" secondAttribute="trailing" constant="24" id="oCu-nU-MpJ"/>
                             <constraint firstItem="qvk-6E-aN1" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="31" id="rF2-dQ-fTk"/>
                             <constraint firstItem="a1y-A5-YA8" firstAttribute="trailing" secondItem="ews-l9-M9q" secondAttribute="trailing" id="sum-Jq-V4L"/>
@@ -586,6 +596,7 @@
                         <outlet property="LFSR2_KeyTextField" destination="R7p-Tm-pUa" id="RaD-eR-Ibl"/>
                         <outlet property="LFSR3_KeyTextField" destination="aeV-qT-gup" id="Inv-RE-dap"/>
                         <outlet property="decryptButton" destination="UCb-pB-hc3" id="tLs-K7-pe0"/>
+                        <outlet property="detailsButton" destination="JmK-6M-oCM" id="UY6-s8-uPe"/>
                         <outlet property="encTypesPopUpButton" destination="qvk-6E-aN1" id="cyA-qo-gwT"/>
                         <outlet property="encryptButton" destination="ews-l9-M9q" id="bdG-Yi-sPC"/>
                         <outlet property="fileLabel" destination="xRI-CT-CfR" id="Bx3-v1-aAo"/>

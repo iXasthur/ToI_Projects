@@ -388,6 +388,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     @IBOutlet weak var encryptButton: NSButton!
     @IBOutlet weak var decryptButton: NSButton!
+    @IBOutlet weak var detailsButton: NSButton!
     
     @IBOutlet weak var encTypesPopUpButton: NSPopUpButton!
     @IBOutlet weak var saveToFileCheckBox: NSButton!
@@ -592,7 +593,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
         if resultTFYOffsetConstraint != nil {
             resultTFStdYOffsetConstraintConstant = resultTFYOffsetConstraint!.constant
-            resultTFGeffeYOffsetConstraintConstant = resultTFStdYOffsetConstraintConstant!*3
+            resultTFGeffeYOffsetConstraintConstant = resultTFStdYOffsetConstraintConstant!*4.4
         } else {
             fatalError("-> Unable to find \"resultTFYOffsetConstraint\"")
         }
@@ -615,12 +616,12 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     private func resetUI(zeroKey: String?, extraActionsListNumber: Int?){
         // Actions:
-        //      nil - std 1 - LFSR 2 - Geffe
+        //      nil - std     4 - Geffe
         keyTextField.stringValue = zeroKey ?? ""
         keyTextField.textColor = .white
         
         switch extraActionsListNumber {
-        case 2:
+        case 4:
             LFSR2_KeyTextField.stringValue = ""
             LFSR3_KeyTextField.stringValue = ""
             LFSR2_KeyTextField.textColor = .white
@@ -628,32 +629,41 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             LFSR2_KeyTextField.isHidden = false
             LFSR3_KeyTextField.isHidden = false
             resultTFYOffsetConstraint!.constant = resultTFGeffeYOffsetConstraintConstant!
-        case 1:
-            break
         default:
             LFSR2_KeyTextField.isHidden = true
             LFSR3_KeyTextField.isHidden = true
             resultTFYOffsetConstraint!.constant = resultTFStdYOffsetConstraintConstant!
         }
         self.view.layout()
-        
-        toggleEncDec()
     }
     
     @IBAction func encTypesPopUpButtonSelectionDidChange(_ sender: NSPopUpButton) {
 //        inputTextField.stringValue = ""
         switch encTypesPopUpButton.indexOfSelectedItem {
         case 4:
-            resetUI(zeroKey: nil, extraActionsListNumber: 2)
+            resetUI(zeroKey: nil, extraActionsListNumber: 4)
+            toggleDetails(to: true)
+            toggleEncDec()
         case 3:
-            resetUI(zeroKey: nil, extraActionsListNumber: 1)
+            resetUI(zeroKey: nil, extraActionsListNumber: nil)
+            toggleDetails(to: true)
+            toggleEncDec()
         case 2:
             resetUI(zeroKey: "cryptography", extraActionsListNumber: nil)
+            toggleDetails(to: false)
+            toggleEncDec()
         default:
             resetUI(zeroKey: nil, extraActionsListNumber: nil)
+            toggleDetails(to: false)
+            toggleEncDec()
         }
         resultTextField.stringValue = ""
-    }  
+    }
+    
+    private func toggleDetails(to: Bool){
+        detailsButton.isHidden = !to
+        detailsButton.isEnabled = false
+    }
     
     private func toggleEncDec(){
         var enableEncDec: Bool = true
