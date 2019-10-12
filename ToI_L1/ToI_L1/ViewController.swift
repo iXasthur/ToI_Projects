@@ -373,7 +373,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let digitsAlphabetString: String = "0123456789"
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
-    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)"]
+    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR", "Geffe"]
     private var lastDirectoryURL: URL? = nil
     private var lastFileName: String? = nil
     
@@ -548,7 +548,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 result = ""
             }
         default:
-            result = "> Invalid encryption type!"
+            result = "> Invalid decryption type!"
         }
         
         resultTextField.stringValue = result
@@ -585,12 +585,19 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     @IBAction func encTypesPopUpButtonSelectionDidChange(_ sender: NSPopUpButton) {
 //        inputTextField.stringValue = ""
-        if encTypesPopUpButton.indexOfSelectedItem == 2 {
+        switch encTypesPopUpButton.indexOfSelectedItem {
+        case 4:
+//            print("Geffe")
+            break
+        case 3:
+//            print("LFSR")
+            break
+        case 2:
             keyTextField.stringValue = "cryptography"
             keyTextField.textColor = .white
             encryptButton.isEnabled = true
             decryptButton.isEnabled = true
-        } else {
+        default:
             keyTextField.stringValue = ""
             keyTextField.textColor = .white
             encryptButton.isEnabled = false
