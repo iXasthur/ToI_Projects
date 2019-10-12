@@ -373,7 +373,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let digitsAlphabetString: String = "0123456789"
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
-    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR", "Geffe"]
+    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR(^25)", "Geffe"]
     private var lastDirectoryURL: URL? = nil
     private var lastFileName: String? = nil
     
@@ -587,10 +587,16 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 //        inputTextField.stringValue = ""
         switch encTypesPopUpButton.indexOfSelectedItem {
         case 4:
-//            print("Geffe")
+            keyTextField.stringValue = ""
+            keyTextField.textColor = .white
+            encryptButton.isEnabled = false
+            decryptButton.isEnabled = false
             break
         case 3:
-//            print("LFSR")
+            keyTextField.stringValue = ""
+            keyTextField.textColor = .white
+            encryptButton.isEnabled = false
+            decryptButton.isEnabled = false
             break
         case 2:
             keyTextField.stringValue = "cryptography"
