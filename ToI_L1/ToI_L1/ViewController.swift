@@ -6,6 +6,7 @@
 //  Copyright © 2019 Mikhail Kavaleuski. All rights reserved.
 //
 
+// L1
 // Вариант 4
 // Написать программу, которая выполняет шифрование и дешифрование текстового
 // файла любого размера, содержащего текст на заданном языке, используя
@@ -21,6 +22,9 @@
 // быть реализованы в одной программе. Программа не должна быть написана в
 // консольном режиме. Результат работы программы –
 // зашифрованный/расшифрованный файл/ы.
+
+// L2
+// V3
 
 import Cocoa
 
@@ -377,6 +381,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private var lastDirectoryURL: URL? = nil
     private var lastFileName: String? = nil
     
+    private var resultTFStdYOffsetConstraintConstant: CGFloat? = nil
+    private var resultTFGeffeYOffsetConstraintConstant: CGFloat? = nil
+    private let resultTFYOffsetConstraintIdentifier: String? = "ResultYOffsetConstraint"
+    private var resultTFYOffsetConstraint: NSLayoutConstraint? = nil
+    
     @IBOutlet weak var encryptButton: NSButton!
     @IBOutlet weak var decryptButton: NSButton!
     
@@ -386,8 +395,12 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     @IBOutlet weak var fileLabel: NSTextField!
     
     @IBOutlet weak var inputTextField: NSTextField!
-    @IBOutlet weak var keyTextField: NSTextField!
     @IBOutlet weak var resultTextField: NSTextField!
+    
+    @IBOutlet weak var keyTextField: NSTextField!
+    @IBOutlet weak var LFSR2_KeyTextField: NSTextField!
+    @IBOutlet weak var LFSR3_KeyTextField: NSTextField!
+    private var keyTextFields: [NSTextField]! = [] // Fill with every key field in viewDidLoad
     
     @IBAction func openDocument(_ sender: Any) {
         print("Opening document")
@@ -568,7 +581,25 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         keyTextField.delegate = self
+        LFSR2_KeyTextField.delegate = self
+        LFSR3_KeyTextField.delegate = self
         resultTextField.delegate = self
+        
+        for constraint in self.view.constraints {
+            if constraint.identifier == resultTFYOffsetConstraintIdentifier {
+                resultTFYOffsetConstraint = constraint
+            }
+        }
+        if resultTFYOffsetConstraint != nil {
+            resultTFStdYOffsetConstraintConstant = resultTFYOffsetConstraint!.constant
+            resultTFGeffeYOffsetConstraintConstant = resultTFStdYOffsetConstraintConstant!*3
+        } else {
+            fatalError("-> Unable to find \"resultTFYOffsetConstraint\"")
+        }
+        
+        keyTextFields.append(keyTextField)
+        keyTextFields.append(LFSR2_KeyTextField)
+        keyTextFields.append(LFSR3_KeyTextField)
         
         prepareUI()
     }
@@ -577,40 +608,65 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         encTypesPopUpButton.removeAllItems()
         encTypesPopUpButton.addItems(withTitles: encTypes)
         
-        encTypesPopUpButton.selectItem(at: 0)
+        encTypesPopUpButton.selectItem(at: 3)
         
-        encryptButton.isEnabled = false
-        decryptButton.isEnabled = false
+        encTypesPopUpButtonSelectionDidChange(encTypesPopUpButton)
+    }
+    
+    private func resetUI(zeroKey: String?, extraActionsListNumber: Int?){
+        // Actions:
+        //      nil - std 1 - LFSR 2 - Geffe
+        keyTextField.stringValue = zeroKey ?? ""
+        keyTextField.textColor = .white
+        
+        switch extraActionsListNumber {
+        case 2:
+            LFSR2_KeyTextField.stringValue = ""
+            LFSR3_KeyTextField.stringValue = ""
+            LFSR2_KeyTextField.textColor = .white
+            LFSR3_KeyTextField.textColor = .white
+            LFSR2_KeyTextField.isHidden = false
+            LFSR3_KeyTextField.isHidden = false
+            resultTFYOffsetConstraint!.constant = resultTFGeffeYOffsetConstraintConstant!
+        case 1:
+            break
+        default:
+            LFSR2_KeyTextField.isHidden = true
+            LFSR3_KeyTextField.isHidden = true
+            resultTFYOffsetConstraint!.constant = resultTFStdYOffsetConstraintConstant!
+        }
+        self.view.layout()
+        
+        toggleEncDec()
     }
     
     @IBAction func encTypesPopUpButtonSelectionDidChange(_ sender: NSPopUpButton) {
 //        inputTextField.stringValue = ""
         switch encTypesPopUpButton.indexOfSelectedItem {
         case 4:
-            keyTextField.stringValue = ""
-            keyTextField.textColor = .white
-            encryptButton.isEnabled = false
-            decryptButton.isEnabled = false
-            break
+            resetUI(zeroKey: nil, extraActionsListNumber: 2)
         case 3:
-            keyTextField.stringValue = ""
-            keyTextField.textColor = .white
-            encryptButton.isEnabled = false
-            decryptButton.isEnabled = false
-            break
+            resetUI(zeroKey: nil, extraActionsListNumber: 1)
         case 2:
-            keyTextField.stringValue = "cryptography"
-            keyTextField.textColor = .white
-            encryptButton.isEnabled = true
-            decryptButton.isEnabled = true
+            resetUI(zeroKey: "cryptography", extraActionsListNumber: nil)
         default:
-            keyTextField.stringValue = ""
-            keyTextField.textColor = .white
-            encryptButton.isEnabled = false
-            decryptButton.isEnabled = false
+            resetUI(zeroKey: nil, extraActionsListNumber: nil)
         }
         resultTextField.stringValue = ""
     }  
+    
+    private func toggleEncDec(){
+        var enableEncDec: Bool = true
+        keyTextFields.forEach { (tf) in
+            if !tf.isHidden {
+                if tf.stringValue.isEmpty {
+                    enableEncDec = false
+                }
+            }
+        }
+        encryptButton.isEnabled = enableEncDec
+        decryptButton.isEnabled = enableEncDec
+    }
     
     func controlTextDidChange(_ obj: Notification) {
         let textField = obj.object as? NSTextField
@@ -618,13 +674,13 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             switch textField?.identifier {
             case keyTextField.identifier:
                 keyTextField.textColor = .white
-                if keyTextField.stringValue.isEmpty {
-                    encryptButton.isEnabled = false
-                    decryptButton.isEnabled = false
-                } else {
-                    encryptButton.isEnabled = true
-                    decryptButton.isEnabled = true
-                }
+                toggleEncDec()
+            case LFSR2_KeyTextField.identifier:
+                LFSR2_KeyTextField.textColor = .white
+                toggleEncDec()
+            case LFSR3_KeyTextField.identifier:
+                LFSR3_KeyTextField.textColor = .white
+                toggleEncDec()
             case resultTextField.identifier:
                 resultTextField.abortEditing()
             default:
