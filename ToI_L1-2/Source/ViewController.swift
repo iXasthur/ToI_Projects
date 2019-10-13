@@ -63,6 +63,17 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return result
     }
     
+    private func checkLFSRKey(key: inout String) -> Bool{
+        var result: Bool = false
+        key = key.lowercased().filter{binaryAlphabetString.contains($0)}
+        
+        if !key.isEmpty {
+            result = true
+        }
+        
+        return result
+    }
+    
     private func normalizedEnString(str: String) -> String{
         return str.lowercased().filter{enAlphabetString.contains($0)}
     }
@@ -94,7 +105,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
         
         mx.forEach { (charArray) in
-            print(charArray)
+//            print(charArray)
             for i in 0...charArray.count-1 {
                 if enAlphabetString.contains(charArray[i]) {
                     newStr.append(charArray[i])
@@ -128,10 +139,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         }
         
-        print()
-        mx.forEach { (charArray) in
-            print(charArray)
-        }
+//        print()
+//        mx.forEach { (charArray) in
+//            print(charArray)
+//        }
         
         var currentSymbol: Int = 0
         for i in 0...mx.count-1 {
@@ -143,10 +154,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         }
         
-        print()
-        mx.forEach { (charArray) in
-            print(charArray)
-        }
+//        print()
+//        mx.forEach { (charArray) in
+//            print(charArray)
+//        }
         
         iOffset = 0
         di = 1
@@ -235,9 +246,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             newStr.append(ruAlphabetString[ruAlphabetString.index(ruAlphabetString.startIndex, offsetBy: index)])
         }
         
-        print("M: \(str)")
-        print("K: \(newKey)")
-        print("С: \(newStr)")
+//        print("M: \(str)")
+//        print("K: \(newKey)")
+//        print("С: \(newStr)")
         
         return newStr
     }
@@ -275,9 +286,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         }
         
-        mx.forEach { (charArray) in
-            print(charArray)
-        }
+//        mx.forEach { (charArray) in
+//            print(charArray)
+//        }
         
         var nextPairStartIndex: String.Index = normalizedInputStr.startIndex
         let lastSymbolIndex: String.Index = normalizedInputStr.index(normalizedInputStr.endIndex, offsetBy: -1)
@@ -314,7 +325,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 pairPos.append(IJPos)
             }
             
-            print(pair,"[",pairPos[0]["i"]!,pairPos[0]["j"]!,"] [",pairPos[1]["i"]!,pairPos[1]["j"]!,"]")
+//            print(pair,"[",pairPos[0]["i"]!,pairPos[0]["j"]!,"] [",pairPos[1]["i"]!,pairPos[1]["j"]!,"]")
             
             let shiftValue: Int
             if encrypt {
@@ -373,13 +384,38 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return playfairAlgorythm(encrypt: false, str: str, key: key)
     }
     
+    private func LFSREncryption(fileURL: URL, saveToFile: Bool, key: String, pPow: Int, bitsToXor: [Int]) {
+        //                    if let data: NSData = NSData(contentsOf: dialog.url!) {
+        //                        var buffer:[UInt8] = Array(repeating: UInt8(0), count: 100)
+        ////                        data.getBytes(&buffer, length: data.length)
+        //                        data.getBytes(&buffer, range: NSRange(location: 2, length: 100))
+        ////                        inputTextField.stringValue = String(bytes: buffer, encoding: .utf8) ?? ""
+        ////                        print(inputTextField.stringValue.count)
+        //                        print(buffer)
+        //                    }
+    }
     
+    private func LFSRDecryption(fileURL: URL, saveToFile: Bool, key: String, pPow: Int, bitsToXor: [Int]) {
+        
+    }
+    
+    
+    private let binaryAlphabetString: String = "01"
     private let digitsAlphabetString: String = "0123456789"
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
-    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR(^25)", "Geffe"]
+    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR(^25)", "Geffe(^25,^33,^23)"]
+    
+    private let LFSR1_PolynomialPwr: Int = 25
+    private let LFSR1_BitsToXor: [Int] = [1,3,25]
+    
+    private var activeFileURL: URL? = nil
     private var lastDirectoryURL: URL? = nil
     private var lastFileName: String? = nil
+    private var buffString: String? = nil
+    
+    private var blockNonStreamEncDec: Bool = false
+    private let previewSymbolCount: Int = 200
     
     private var resultTFStdYOffsetConstraintConstant: CGFloat? = nil
     private var resultTFGeffeYOffsetConstraintConstant: CGFloat? = nil
@@ -416,16 +452,35 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 let ext = dialog.url?.pathExtension
                 lastDirectoryURL = dialog.directoryURL
                 lastFileName = dialog.url?.deletingPathExtension().lastPathComponent
+                activeFileURL = dialog.url!
                 
+                buffString = nil
                 do {
-                    inputTextField.stringValue = try String(contentsOf: dialog.url!)
+                    buffString = try String(contentsOf: dialog.url!)
+                    
+                    var previewStr: String = buffString!
+                    if (previewStr.count - previewSymbolCount) > 0 {
+                        previewStr.removeLast(previewStr.count - previewSymbolCount)
+                        previewStr = previewStr + "..."
+                    }
+                    inputTextField.stringValue = previewStr
+                    blockNonStreamEncDec = false
+                    inputTextField.isEnabled = true
+                    resultTextField.isEnabled = true
                 } catch _ {
-                    print("Error opening file")
+                    inputTextField.stringValue = "> Unable to create preview(invalid file)!\n> Available algorithms: \(encTypes[3]), \(encTypes[4])"
+                    blockNonStreamEncDec = true
+                    inputTextField.isEnabled = false
+                    resultTextField.isEnabled = false
                 }
                 
                 fileLabel.stringValue = "File: " + lastFileName! + "." + ext!
+                if let data: NSData = NSData(contentsOf: dialog.url!) {
+                    fileLabel.stringValue = fileLabel.stringValue + " (bytes: " + String(data.length) + ")"
+                }
+                encTypesPopUpButton.isEnabled = true
                 
-                saveToFileCheckBox.isEnabled = true
+                encTypesPopUpButtonSelectionDidChange(encTypesPopUpButton)
             } else {
                 print("Error opening file")
             }
@@ -434,10 +489,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     @IBAction func encryptAction(_ sender: Any){
-        var str: String = inputTextField.stringValue
         let encType: String = encTypesPopUpButton.title
+        var alreadySavedFile: Bool = false
         var key: String = keyTextField.stringValue
-        print("Encrypting msg: \(str)")
+        print()
+        print("Initiating encryption!")
         print("Encryption type: \(encType)")
         print("Key: \(key)")
         
@@ -445,10 +501,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         switch encType {
         case encTypes[0]:
             if checkRailwayKey(key: &key){
+                var str: String = buffString!
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
+                
                 str = normalizedEnString(str: str)
-                inputTextField.stringValue = str
                 if !str.isEmpty {
                     result = railwayEncryption(str: str, key: Int(key)!)
                 } else {
@@ -460,10 +517,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         case encTypes[1]:
             if checkVigenereKey(key: &key){
+                var str: String = buffString!
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
+                
                 str = normalizedRuString(str: str)
-                inputTextField.stringValue = str
                 if !str.isEmpty {
                     result = vigenereEncryption(str: str, key: key)
                 } else {
@@ -475,10 +533,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         case encTypes[2]:
             if checkPlayfairKey(key: &key){
+                var str: String = buffString!
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
+                
                 str = normalizedEnString(str: str)
-                inputTextField.stringValue = str
                 if !str.isEmpty {
                     result = playfairEncryption(str: str, key: key)
                 } else {
@@ -488,13 +547,36 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 keyTextField.textColor = .systemPink
                 result = ""
             }
+        case encTypes[3]:
+            if checkLFSRKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                
+                LFSREncryption(fileURL: activeFileURL!, saveToFile: true, key: key, pPow: LFSR1_PolynomialPwr, bitsToXor: LFSR1_BitsToXor)
+                alreadySavedFile = true
+                
+                if buffString == nil {
+                    result = resultTextField.stringValue
+                } else {
+                    result = "> LFSREncryption PREVIEW"
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
         default:
             result = "> Invalid encryption type!"
+            alreadySavedFile = true
         }
         
-        resultTextField.stringValue = result
+        var previewStr: String = result
+        if (previewStr.count - previewSymbolCount) > 0 {
+            previewStr.removeLast(previewStr.count - previewSymbolCount)
+            previewStr = previewStr + "..."
+        }
+        resultTextField.stringValue = previewStr
         
-        if saveToFileCheckBox.state == .on {
+        if !alreadySavedFile && saveToFileCheckBox.state == .on {
             let affix: String = "_enc(" + String(encType[encType.index(encType.startIndex, offsetBy: 0)]) + ")"
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension("txt")
             
@@ -504,13 +586,17 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                print(err)
             }
         }
+        
+        print("Finished encryption!")
     }
     
     @IBAction func decryptAction(_ sender: Any){
-        var str: String = inputTextField.stringValue
         let encType: String = encTypesPopUpButton.title
         var key: String = keyTextField.stringValue
-        print("Decrypting msg: \(str)")
+        var alreadySavedFile: Bool = false
+        
+        print()
+        print("Initiating decryption!")
         print("Decryption type: \(encType)")
         print("Key: \(key)")
         
@@ -518,10 +604,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         switch encType {
         case encTypes[0]:
             if checkRailwayKey(key: &key){
+                var str: String = buffString!
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
+                
                 str = normalizedEnString(str: str)
-                inputTextField.stringValue = str
                 if !str.isEmpty {
                     result = railwayDecryption(str: str, key: Int(key)!)
                 } else {
@@ -533,10 +620,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         case encTypes[1]:
             if checkVigenereKey(key: &key){
+                var str: String = buffString!
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
+                
                 str = normalizedRuString(str: str)
-                inputTextField.stringValue = str
                 if !str.isEmpty {
                     result = vigenereDecryption(str: str, key: key)
                 } else {
@@ -548,10 +636,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         case encTypes[2]:
             if checkPlayfairKey(key: &key){
+                var str: String = buffString!
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
+                
                 str = normalizedEnString(str: str)
-                inputTextField.stringValue = str
                 if !str.isEmpty {
                     result = playfairDecryption(str: str, key: key)
                 } else {
@@ -561,13 +650,36 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 keyTextField.textColor = .systemPink
                 result = ""
             }
+        case encTypes[3]:
+            if checkLFSRKey(key: &key){
+                keyTextField.stringValue = key
+                keyTextField.textColor = .green
+                
+                LFSRDecryption(fileURL: activeFileURL!, saveToFile: true, key: key, pPow: LFSR1_PolynomialPwr, bitsToXor: LFSR1_BitsToXor)
+                alreadySavedFile = true
+                
+                if buffString == nil {
+                    result = resultTextField.stringValue
+                } else {
+                    result = "> LFSRDecryption PREVIEW"
+                }
+            } else {
+                keyTextField.textColor = .systemPink
+                result = ""
+            }
         default:
             result = "> Invalid decryption type!"
+            alreadySavedFile = true
         }
         
-        resultTextField.stringValue = result
+        var previewStr: String = result
+        if (previewStr.count - previewSymbolCount) > 0 {
+            previewStr.removeLast(previewStr.count - previewSymbolCount)
+            previewStr = previewStr + "..."
+        }
+        resultTextField.stringValue = previewStr
         
-        if saveToFileCheckBox.state == .on {
+        if !alreadySavedFile && saveToFileCheckBox.state == .on {
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+"_dcr").appendingPathExtension("txt")
             
             do {
@@ -576,6 +688,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 print(err)
             }
         }
+        
+        print("Finished decryption!")
     }
     
     
@@ -584,6 +698,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         keyTextField.delegate = self
         LFSR2_KeyTextField.delegate = self
         LFSR3_KeyTextField.delegate = self
+        inputTextField.delegate = self
         resultTextField.delegate = self
         
         for constraint in self.view.constraints {
@@ -606,17 +721,27 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     private func prepareUI(){
+        inputTextField.isEnabled = false
+        keyTextField.isEnabled = false
+        resultTextField.isEnabled = false
+        
         encTypesPopUpButton.removeAllItems()
         encTypesPopUpButton.addItems(withTitles: encTypes)
         
         encTypesPopUpButton.selectItem(at: 3)
         
         encTypesPopUpButtonSelectionDidChange(encTypesPopUpButton)
+        
+        for tf in keyTextFields {
+            tf.isEnabled = false
+        }
+        encTypesPopUpButton.isEnabled = false
+        saveToFileCheckBox.isEnabled = false
     }
     
     private func resetUI(zeroKey: String?, extraActionsListNumber: Int?){
         // Actions:
-        //      nil - std     4 - Geffe
+        //      nil - std   3 - LFSR  4 - Geffe
         keyTextField.stringValue = zeroKey ?? ""
         keyTextField.textColor = .white
         
@@ -641,23 +766,41 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 //        inputTextField.stringValue = ""
         switch encTypesPopUpButton.indexOfSelectedItem {
         case 4:
+            // Geffe
             resetUI(zeroKey: nil, extraActionsListNumber: 4)
             toggleDetails(to: true)
             toggleEncDec()
+            keyTextField.isEnabled = true
+            LFSR2_KeyTextField.isEnabled = true
+            LFSR3_KeyTextField.isEnabled = true
+            saveToFileCheckBox.state = .on
+            saveToFileCheckBox.isEnabled = false
         case 3:
+            // LFSR
             resetUI(zeroKey: nil, extraActionsListNumber: nil)
             toggleDetails(to: true)
             toggleEncDec()
-        case 2:
-            resetUI(zeroKey: "cryptography", extraActionsListNumber: nil)
-            toggleDetails(to: false)
-            toggleEncDec()
+            keyTextField.isEnabled = true
+            saveToFileCheckBox.state = .on
+            saveToFileCheckBox.isEnabled = false
         default:
             resetUI(zeroKey: nil, extraActionsListNumber: nil)
             toggleDetails(to: false)
             toggleEncDec()
+            if blockNonStreamEncDec {
+                keyTextField.isEnabled = false
+            } else {
+                keyTextField.isEnabled = true
+            }
+            saveToFileCheckBox.state = .off
+            saveToFileCheckBox.isEnabled = true
         }
-        resultTextField.stringValue = ""
+        
+        if !blockNonStreamEncDec {
+            resultTextField.stringValue = ""
+        } else {
+            resultTextField.stringValue = "> Result preview is unavailable!"
+        }
     }
     
     private func toggleDetails(to: Bool){
@@ -691,6 +834,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             case LFSR3_KeyTextField.identifier:
                 LFSR3_KeyTextField.textColor = .white
                 toggleEncDec()
+            case inputTextField.identifier:
+                inputTextField.abortEditing()
             case resultTextField.identifier:
                 resultTextField.abortEditing()
             default:
