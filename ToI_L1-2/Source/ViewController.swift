@@ -385,14 +385,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     
     private func LFSREncryption(fileURL: URL, saveToFile: Bool, key: String, pPow: Int, bitsToXor: [Int]) {
-        //                    if let data: NSData = NSData(contentsOf: dialog.url!) {
-        //                        var buffer:[UInt8] = Array(repeating: UInt8(0), count: 100)
-        ////                        data.getBytes(&buffer, length: data.length)
-        //                        data.getBytes(&buffer, range: NSRange(location: 2, length: 100))
-        ////                        inputTextField.stringValue = String(bytes: buffer, encoding: .utf8) ?? ""
-        ////                        print(inputTextField.stringValue.count)
-        //                        print(buffer)
-        //                    }
+//        if let data: NSData = NSData(contentsOf: fileURL) {
+//            var buffer:[UInt8] = Array(repeating: UInt8(0), count: 100)
+//            data.getBytes(&buffer, range: NSRange(location: 0, length: 100))
+//        }
     }
     
     private func LFSRDecryption(fileURL: URL, saveToFile: Bool, key: String, pPow: Int, bitsToXor: [Int]) {
@@ -560,6 +556,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 } else {
                     result = "> LFSREncryption PREVIEW"
                 }
+                
+                detailsButton.isEnabled = true
             } else {
                 keyTextField.textColor = .systemPink
                 result = ""
@@ -663,6 +661,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 } else {
                     result = "> LFSRDecryption PREVIEW"
                 }
+                
+                detailsButton.isEnabled = true
             } else {
                 keyTextField.textColor = .systemPink
                 result = ""
