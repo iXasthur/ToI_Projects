@@ -412,6 +412,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     private var blockNonStreamEncDec: Bool = false
     private let previewSymbolCount: Int = 200
+    private let fileIsTooBigByteValue: Int = 1024000
     
     private var resultTFStdYOffsetConstraintConstant: CGFloat? = nil
     private var resultTFGeffeYOffsetConstraintConstant: CGFloat? = nil
@@ -449,9 +450,19 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 lastDirectoryURL = dialog.directoryURL
                 lastFileName = dialog.url?.deletingPathExtension().lastPathComponent
                 activeFileURL = dialog.url!
+                var err: String? = nil
+                var byteCount:Int? = nil
+                if let data: NSData = NSData(contentsOf: dialog.url!) {
+                    byteCount = data.length
+                }
                 
                 buffString = nil
                 do {
+                    if (byteCount != nil) && byteCount! > fileIsTooBigByteValue {
+                        err = "File is too big"
+                        throw NSError(domain: "File was defined as too big by the app", code: 13201, userInfo: [:])
+                    }
+                    
                     buffString = try String(contentsOf: dialog.url!)
                     
                     var previewStr: String = buffString!
@@ -463,16 +474,20 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                     blockNonStreamEncDec = false
                     inputTextField.isEnabled = true
                     resultTextField.isEnabled = true
+                    
                 } catch _ {
-                    inputTextField.stringValue = "> Unable to create preview(invalid file)!\n> Available algorithms: \(encTypes[3]), \(encTypes[4])"
+                    if err == nil {
+                        err = "Invalid encoding"
+                    }
+                    inputTextField.stringValue = "> Unable to create preview(\(err!))!\n> Available algorithms: \(encTypes[3]), \(encTypes[4])"
                     blockNonStreamEncDec = true
                     inputTextField.isEnabled = false
                     resultTextField.isEnabled = false
                 }
                 
                 fileLabel.stringValue = "File: " + lastFileName! + "." + ext!
-                if let data: NSData = NSData(contentsOf: dialog.url!) {
-                    fileLabel.stringValue = fileLabel.stringValue + " (bytes: " + String(data.length) + ")"
+                if byteCount != nil {
+                    fileLabel.stringValue = fileLabel.stringValue + " (bytes: " + String(byteCount!) + ")"
                 }
                 encTypesPopUpButton.isEnabled = true
                 
