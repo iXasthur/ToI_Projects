@@ -418,7 +418,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             var locationToReadFrom:Int = 0
             var currentBlockSize: Int = 0
             
-            var dataToAppend: NSMutableData = NSMutableData()
+            let dataToAppend: NSMutableData = NSMutableData()
             
             if bytesLeft<blockSizeByteValue {
                 currentBlockSize = bytesLeft
