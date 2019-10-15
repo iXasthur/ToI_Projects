@@ -384,14 +384,81 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return playfairAlgorythm(encrypt: false, str: str, key: key)
     }
     
-    private func LFSREncryption(fileURL: URL, saveToFile: Bool, key: String, pPow: Int, bitsToXor: [Int]) {
-//        if let data: NSData = NSData(contentsOf: fileURL) {
-//            var buffer:[UInt8] = Array(repeating: UInt8(0), count: 100)
-//            data.getBytes(&buffer, range: NSRange(location: 0, length: 100))
-//        }
+    private func LFSRNormalizeKey(key: inout String, pwr: Int){
+        key = key.padding(toLength: pwr, withPad: "0", startingAt: 0)
     }
     
-    private func LFSRDecryption(fileURL: URL, saveToFile: Bool, key: String, pPow: Int, bitsToXor: [Int]) {
+    // 2 5
+    // 1010121020  _10
+    // 10 - 2
+    // 10 - 5
+    private func LFSRGetCurrentXorV(regCondition: inout String, bitsToXor: [UInt8], pPow: Int) -> UInt8{
+        var key: UInt8 = 0b00000000
+        var r: UInt8 = UInt8(String(regCondition[regCondition.index(regCondition.startIndex, offsetBy: pPow - Int(bitsToXor[0]))]))!
+        var initializedKey: Bool = false
+        for _ in 0...7 {
+            var i:Int = 1
+            while i<=bitsToXor.count-1 {
+                let v: UInt8 = UInt8(String(regCondition[regCondition.index(regCondition.startIndex, offsetBy: pPow - Int(bitsToXor[i]))]))!
+                r = r^v
+                i = i + 1
+            }
+            
+            if initializedKey {
+                key = key << 1
+                key = key + UInt8(String(regCondition.first!))!
+            } else {
+                key = (key + UInt8(String(regCondition.first!))!)
+                initializedKey = true
+            }
+            regCondition.removeFirst()
+            regCondition.append(String(r))
+        }
+        return key
+    }
+    
+    private func LFSREncryption(fileURL: URL, saveToFile: Bool, _key: String, pPow: Int, bitsToXor: [UInt8]) {
+        var regCondition: String = _key.padding(toLength: pPow, withPad: "0", startingAt: 0)
+        var xorV: UInt8 = 0
+        
+        if let data: NSData = NSData(contentsOf: fileURL) {
+            var buffer:[UInt8] = Array(repeating: UInt8(0), count: blockSizeByteValue)
+            var bytesLeft:Int = data.length
+            var locationToReadFrom:Int = 0
+            var currentBlockSize: Int = 0
+            
+            if bytesLeft<blockSizeByteValue {
+                currentBlockSize = bytesLeft
+                bytesLeft = 0
+            } else {
+                currentBlockSize = blockSizeByteValue
+                bytesLeft = bytesLeft - blockSizeByteValue
+            }
+            while currentBlockSize > 0 {
+                data.getBytes(&buffer, range: NSRange(location: locationToReadFrom, length: currentBlockSize))
+                
+                for i in 0...currentBlockSize-1 {
+                    xorV = LFSRGetCurrentXorV(regCondition: &regCondition, bitsToXor: bitsToXor, pPow: pPow)
+                    buffer[i] = buffer[i]^xorV
+                }
+                
+                
+                if bytesLeft<blockSizeByteValue{
+                    locationToReadFrom = locationToReadFrom + currentBlockSize
+                    currentBlockSize = bytesLeft
+                    bytesLeft = 0
+                } else {
+                    locationToReadFrom = locationToReadFrom + currentBlockSize
+                    currentBlockSize = blockSizeByteValue
+                    bytesLeft = bytesLeft - blockSizeByteValue
+                }
+            }
+        } else {
+            print("-> Error getting data form \(fileURL)")
+        }
+    }
+    
+    private func LFSRDecryption(fileURL: URL, saveToFile: Bool, _key: String, pPow: Int, bitsToXor: [UInt8]) {
         
     }
     
@@ -403,7 +470,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR(^25)", "Geffe(^25,^33,^23)"]
     
     private let LFSR1_PolynomialPwr: Int = 25
-    private let LFSR1_BitsToXor: [Int] = [1,3,25]
+    private let LFSR1_BitsToXor: [UInt8] = [3,25]
+    private let LFSR2_PolynomialPwr: Int = 33
+    private let LFSR2_BitsToXor: [Int] = [13,33]
+    private let LFSR3_PolynomialPwr: Int = 23
+    private let LFSR3_BitsToXor: [Int] = [23,5]
     
     private var activeFileURL: URL? = nil
     private var lastDirectoryURL: URL? = nil
@@ -412,7 +483,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     private var blockNonStreamEncDec: Bool = false
     private let previewSymbolCount: Int = 200
-    private let fileIsTooBigByteValue: Int = 1024000
+    private let fileIsTooBigByteValue: Int = 1048576 // 1MB
+    private let blockSizeByteValue: Int = 65536 // 64KB
     
     private var resultTFStdYOffsetConstraintConstant: CGFloat? = nil
     private var resultTFGeffeYOffsetConstraintConstant: CGFloat? = nil
@@ -563,7 +635,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
                 
-                LFSREncryption(fileURL: activeFileURL!, saveToFile: true, key: key, pPow: LFSR1_PolynomialPwr, bitsToXor: LFSR1_BitsToXor)
+                LFSREncryption(fileURL: activeFileURL!, saveToFile: true, _key: key, pPow: LFSR1_PolynomialPwr, bitsToXor: LFSR1_BitsToXor)
                 alreadySavedFile = true
                 
                 if buffString == nil {
@@ -668,7 +740,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 keyTextField.stringValue = key
                 keyTextField.textColor = .green
                 
-                LFSRDecryption(fileURL: activeFileURL!, saveToFile: true, key: key, pPow: LFSR1_PolynomialPwr, bitsToXor: LFSR1_BitsToXor)
+                LFSRDecryption(fileURL: activeFileURL!, saveToFile: true, _key: key, pPow: LFSR1_PolynomialPwr, bitsToXor: LFSR1_BitsToXor)
                 alreadySavedFile = true
                 
                 if buffString == nil {
@@ -786,6 +858,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             toggleDetails(to: true)
             toggleEncDec()
             keyTextField.isEnabled = true
+            keyTextField.placeholderString = "LFSR_KEY1 ^25"
             LFSR2_KeyTextField.isEnabled = true
             LFSR3_KeyTextField.isEnabled = true
             saveToFileCheckBox.state = .on
@@ -796,6 +869,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             toggleDetails(to: true)
             toggleEncDec()
             keyTextField.isEnabled = true
+            keyTextField.placeholderString = "LFSR_KEY1 ^25"
             saveToFileCheckBox.state = .on
             saveToFileCheckBox.isEnabled = false
         default:
@@ -807,6 +881,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             } else {
                 keyTextField.isEnabled = true
             }
+            keyTextField.placeholderString = "Key"
             saveToFileCheckBox.state = .off
             saveToFileCheckBox.isEnabled = true
         }
@@ -841,12 +916,21 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         if textField?.identifier != nil {
             switch textField?.identifier {
             case keyTextField.identifier:
+                if (encTypesPopUpButton.indexOfSelectedItem == 3 || encTypesPopUpButton.indexOfSelectedItem == 4) && keyTextField.stringValue.count > LFSR1_PolynomialPwr {
+                    keyTextField.stringValue.removeLast()
+                }
                 keyTextField.textColor = .white
                 toggleEncDec()
             case LFSR2_KeyTextField.identifier:
+                if encTypesPopUpButton.indexOfSelectedItem == 4 && LFSR2_KeyTextField.stringValue.count > LFSR2_PolynomialPwr {
+                    LFSR2_KeyTextField.stringValue.removeLast()
+                }
                 LFSR2_KeyTextField.textColor = .white
                 toggleEncDec()
             case LFSR3_KeyTextField.identifier:
+                if encTypesPopUpButton.indexOfSelectedItem == 4 && LFSR3_KeyTextField.stringValue.count > LFSR3_PolynomialPwr {
+                    LFSR3_KeyTextField.stringValue.removeLast()
+                }
                 LFSR3_KeyTextField.textColor = .white
                 toggleEncDec()
             case inputTextField.identifier:
