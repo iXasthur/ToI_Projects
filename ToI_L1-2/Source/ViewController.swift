@@ -428,7 +428,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 bytesLeft = bytesLeft - blockSizeByteValue
             }
             while currentBlockSize > 0 {
-                var buffer:[UInt8] = Array(repeating: UInt8(0), count: currentBlockSize)
+                var buffer:[UInt8] = Array(repeating: 0, count: currentBlockSize)
                 data.getBytes(&buffer, range: NSRange(location: locationToReadFrom, length: currentBlockSize))
                 
                 for i in 0...(currentBlockSize-1) {
