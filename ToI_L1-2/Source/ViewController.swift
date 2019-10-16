@@ -403,6 +403,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         let newKey: String = _key.padding(toLength: pPow, withPad: "0", startingAt: 0)
         var regCondition: UInt64 = UInt64(newKey, radix: 2)!
 //        var xorV: UInt8 = 0
+        var keyDict: [String:String] = [:]
+        keyDict.updateValue(newKey, forKey: LFSRDictKeys.KEY1)
+        detailsLFSR.updateKEYS(_KeyTFs: keyDict)
         
         if let data: NSData = NSData(contentsOf: fileURL) {
             let affix: String
@@ -412,8 +415,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 affix = "_dec(L)"
             }
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension(fileURL.pathExtension)
+            activeResultFileURL = url
             
-//            var buffer:[UInt8] = Array(repeating: UInt8(0), count: blockSizeByteValue)
             var bytesLeft:Int = data.length
             var locationToReadFrom:Int = 0
             var currentBlockSize: Int = 0
@@ -458,11 +461,92 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
     }
     
+    private func simulateLFSRKeyGenerator(_regCondition:UInt64,_pPow:Int,_bitsToXor:[Int],_simCount:Int) -> [UInt8] {
+        var simulatedXorKey: [UInt8] = Array(repeating: 0, count: _simCount)
+        var regCondition: UInt64 = _regCondition
+        for i in 0..._simCount-1 {
+            simulatedXorKey[i] = LFSRGetXorV(regCondition: &regCondition, bitsToXor: _bitsToXor, pPow: _pPow)
+        }
+        return simulatedXorKey
+    }
+    
+    private func GeffeAlgorithm(fileURL: URL, encryption: Bool, saveToFile: Bool, _keys: [String], pPows: [Int], bitsToXor: [[Int]]) {
+        var newKeys: [String] = Array(repeating: "", count: _keys.count)
+        var regConditions: [UInt64] = Array(repeating: 0, count: newKeys.count)
+        for i in 0...2 {
+            newKeys[i] = _keys[i].padding(toLength: pPows[i], withPad: "0", startingAt: 0)
+            regConditions[i] = UInt64(newKeys[i], radix: 2)!
+        }
+        detailsGeffe.updateKEYS(_KeyTFs: [LFSRDictKeys.KEY1 : newKeys[0]])
+        detailsGeffe.updateKEYS(_KeyTFs: [LFSRDictKeys.KEY2 : newKeys[1]])
+        detailsGeffe.updateKEYS(_KeyTFs: [LFSRDictKeys.KEY3 : newKeys[2]])
+        detailsGeffe.updateTFs(_CodeTFs: [LFSRDictKeys.One : simulateLFSRKeyGenerator(_regCondition: regConditions[0], _pPow: pPows[0], _bitsToXor: bitsToXor[0], _simCount: outputByteCount)])
+        detailsGeffe.updateTFs(_CodeTFs: [LFSRDictKeys.Two : simulateLFSRKeyGenerator(_regCondition: regConditions[1], _pPow: pPows[1], _bitsToXor: bitsToXor[1], _simCount: outputByteCount)])
+        detailsGeffe.updateTFs(_CodeTFs: [LFSRDictKeys.Three : simulateLFSRKeyGenerator(_regCondition: regConditions[2], _pPow: pPows[2], _bitsToXor: bitsToXor[2], _simCount: outputByteCount)])
+        if let data: NSData = NSData(contentsOf: fileURL) {
+            let affix: String
+            if encryption {
+                affix = "_enc(G)"
+            } else {
+                affix = "_dec(G)"
+            }
+            let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension(fileURL.pathExtension)
+            activeResultFileURL = url
+            
+            var bytesLeft:Int = data.length
+            var locationToReadFrom:Int = 0
+            var currentBlockSize: Int = 0
+            let dataToAppend: NSMutableData = NSMutableData()
+            
+            if bytesLeft<blockSizeByteValue {
+                currentBlockSize = bytesLeft
+                bytesLeft = 0
+            } else {
+                currentBlockSize = blockSizeByteValue
+                bytesLeft = bytesLeft - blockSizeByteValue
+            }
+            
+            while currentBlockSize > 0 {
+                var buffer:[UInt8] = Array(repeating: 0, count: currentBlockSize)
+                
+                data.getBytes(&buffer, range: NSRange(location: locationToReadFrom, length: currentBlockSize))
+                for i in 0...(currentBlockSize-1) {
+                    let xorV1: UInt8 = LFSRGetXorV(regCondition: &regConditions[0], bitsToXor: bitsToXor[0], pPow: pPows[0])
+                    let xorV2: UInt8 = LFSRGetXorV(regCondition: &regConditions[1], bitsToXor: bitsToXor[1], pPow: pPows[1])
+                    let xorV3: UInt8 = LFSRGetXorV(regCondition: &regConditions[2], bitsToXor: bitsToXor[2], pPow: pPows[2])
+                    buffer[i] = buffer[i]^((xorV1 & xorV2) | (~xorV1 & xorV3))
+                }
+                
+                dataToAppend.append(Data(buffer))
+                
+                if bytesLeft<blockSizeByteValue{
+                    locationToReadFrom = locationToReadFrom + currentBlockSize
+                    currentBlockSize = bytesLeft
+                    bytesLeft = 0
+                } else {
+                    locationToReadFrom = locationToReadFrom + currentBlockSize
+                    currentBlockSize = blockSizeByteValue
+                    bytesLeft = bytesLeft - blockSizeByteValue
+                }
+            }
+                          
+            do {
+                try dataToAppend.write(to: url, options: .atomic)
+            } catch _ {
+            
+            }
+        } else {
+            print("-> Error getting data form \(fileURL)")
+        }
+        
+    }
+
+    
     private let binaryAlphabetString: String = "01"
     private let digitsAlphabetString: String = "0123456789"
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
-    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR(^25)", "Geffe(^25,^33,^23)"]
+    private let encTypes: [String] = ["Railway(en)", "Vigenère(ru)", "Playfair(en)", "LFSR(^25)", "Geffe(^25,^33,^23)"] // APPEND BUT DO NOT CHANGE ORDER
     
     private let LFSR1_PolynomialPwr: Int = 25
     private let LFSR1_BitsToXor: [Int] = [3-1,25-1]
@@ -472,6 +556,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let LFSR3_BitsToXor: [Int] = [23-1,5-1]
     
     private var activeFileURL: URL? = nil
+    private var activeResultFileURL: URL? = nil
     private var lastDirectoryURL: URL? = nil
     private var lastFileName: String? = nil
     private var buffString: String? = nil
@@ -480,11 +565,15 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let previewSymbolCount: Int = 200
     private let fileIsTooBigByteValue: Int = 1048576 // 1MB
     private let blockSizeByteValue: Int = 65536 // 64KB
+    private let outputByteCount: Int = 50
     
     private var resultTFStdYOffsetConstraintConstant: CGFloat? = nil
     private var resultTFGeffeYOffsetConstraintConstant: CGFloat? = nil
     private let resultTFYOffsetConstraintIdentifier: String? = "ResultYOffsetConstraint"
     private var resultTFYOffsetConstraint: NSLayoutConstraint? = nil
+    
+    private var detailsLFSR: DetailsViewControllerLFSR!
+    private var detailsGeffe: DetailsViewControllerGeffe!
     
     @IBOutlet weak var encryptButton: NSButton!
     @IBOutlet weak var decryptButton: NSButton!
@@ -502,6 +591,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     @IBOutlet weak var LFSR2_KeyTextField: NSTextField!
     @IBOutlet weak var LFSR3_KeyTextField: NSTextField!
     private var keyTextFields: [NSTextField]! = [] // Fill with every key field in viewDidLoad
+    
     
     @IBAction func openDocument(_ sender: Any) {
         print("Opening document")
@@ -645,6 +735,34 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 keyTextField.textColor = .systemPink
                 result = ""
             }
+        case encTypes[4]:
+            var keys: [String] = [key]
+            keys.append(LFSR2_KeyTextField.stringValue)
+            keys.append(LFSR3_KeyTextField.stringValue)
+            var flag: Bool = true
+            for i in 0...2 {
+                if !checkLFSRKey(key: &keys[i]) {
+                    keyTextFields[i].textColor = .systemPink
+                    flag = false
+                } else {
+                    keyTextFields[i].stringValue = keys[i]
+                    keyTextFields[i].textColor = .green
+                }
+            }
+            
+            if flag {
+                GeffeAlgorithm(fileURL: activeFileURL!, encryption: true, saveToFile: true, _keys: keys, pPows: [LFSR1_PolynomialPwr,LFSR2_PolynomialPwr,LFSR3_PolynomialPwr,], bitsToXor: [LFSR1_BitsToXor,LFSR2_BitsToXor,LFSR3_BitsToXor])
+                alreadySavedFile = true
+                if buffString == nil {
+                    result = resultTextField.stringValue
+                } else {
+                    result = "> LFSREncryption PREVIEW"
+                }
+                detailsButton.isEnabled = true
+            } else {
+                alreadySavedFile = true
+                result = ""
+            }
         default:
             result = "> Invalid encryption type!"
             alreadySavedFile = true
@@ -751,6 +869,34 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 keyTextField.textColor = .systemPink
                 result = ""
             }
+        case encTypes[4]:
+            var keys: [String] = [key]
+            keys.append(LFSR2_KeyTextField.stringValue)
+            keys.append(LFSR3_KeyTextField.stringValue)
+            var flag: Bool = true
+            for i in 0...2 {
+                if !checkLFSRKey(key: &keys[i]) {
+                    keyTextFields[i].textColor = .systemPink
+                    flag = false
+                } else {
+                    keyTextFields[i].stringValue = keys[i]
+                    keyTextFields[i].textColor = .green
+                }
+            }
+            
+            if flag {
+                GeffeAlgorithm(fileURL: activeFileURL!, encryption: false, saveToFile: true, _keys: keys, pPows: [LFSR1_PolynomialPwr,LFSR2_PolynomialPwr,LFSR3_PolynomialPwr,], bitsToXor: [LFSR1_BitsToXor,LFSR2_BitsToXor,LFSR3_BitsToXor])
+                alreadySavedFile = true
+                if buffString == nil {
+                    result = resultTextField.stringValue
+                } else {
+                    result = "> LFSREncryption PREVIEW"
+                }
+                detailsButton.isEnabled = true
+            } else {
+                alreadySavedFile = true
+                result = ""
+            }
         default:
             result = "> Invalid decryption type!"
             alreadySavedFile = true
@@ -802,6 +948,19 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         keyTextFields.append(LFSR3_KeyTextField)
         
         prepareUI()
+        
+        detailsLFSR = DetailsViewControllerLFSR()
+        detailsGeffe = DetailsViewControllerGeffe()
+//        debugDetailsLFSR()
+//        debugDetailsGeffe()
+    }
+    
+    private func debugDetailsGeffe(){
+        self.presentAsModalWindow(detailsGeffe)
+    }
+    
+    private func debugDetailsLFSR(){
+        self.presentAsModalWindow(detailsLFSR)
     }
     
     private func prepareUI(){
@@ -937,6 +1096,38 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             default:
                 break
             }
+        }
+    }
+    
+    @IBAction func detailsAction(_ sender: Any){
+        var data: NSData? = NSData(contentsOf: activeFileURL!)
+        var codeDict: [String:[UInt8]] = [:]
+        var count: Int = outputByteCount
+        
+        if data != nil {
+            if data!.count < count {
+                count = data!.count
+            }
+            var buffer: [UInt8] = Array(repeating: 0, count: count)
+            data?.getBytes(&buffer, length: buffer.count)
+            codeDict.updateValue(buffer, forKey: LFSRDictKeys.Initial)
+        }
+        data = NSData(contentsOf: activeResultFileURL!)
+        if data != nil {
+            var buffer: [UInt8] = Array(repeating: 0, count: count)
+            data?.getBytes(&buffer, length: buffer.count)
+            codeDict.updateValue(buffer, forKey: LFSRDictKeys.Edited)
+        }
+        
+        switch encTypesPopUpButton.indexOfSelectedItem {
+        case 3:
+            detailsLFSR.updateTFs(_CodeTFs: codeDict)
+            self.presentAsModalWindow(detailsLFSR)
+        case 4:
+            detailsGeffe.updateTFs(_CodeTFs: codeDict)
+            self.presentAsModalWindow(detailsGeffe)
+        default:
+            break
         }
     }
 

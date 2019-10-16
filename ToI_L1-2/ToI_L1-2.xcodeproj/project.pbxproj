@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		511845D223573F1F000FB5D9 /* DetailsViewControllerLFSR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511845D023573F1F000FB5D9 /* DetailsViewControllerLFSR.swift */; };
+		511845D323573F1F000FB5D9 /* DetailsViewControllerLFSR.xib in Resources */ = {isa = PBXBuildFile; fileRef = 511845D123573F1F000FB5D9 /* DetailsViewControllerLFSR.xib */; };
+		511845D623574A9F000FB5D9 /* DetailsViewControllerGeffe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511845D423574A9F000FB5D9 /* DetailsViewControllerGeffe.swift */; };
+		511845D923574BA6000FB5D9 /* DetailsViewControllerGeffe.xib in Resources */ = {isa = PBXBuildFile; fileRef = 511845D823574B36000FB5D9 /* DetailsViewControllerGeffe.xib */; };
+		511845DB23576218000FB5D9 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511845DA23576218000FB5D9 /* Keys.swift */; };
 		51C93425232A2E8700A74B55 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C93424232A2E8700A74B55 /* AppDelegate.swift */; };
 		51C93427232A2E8700A74B55 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C93426232A2E8700A74B55 /* ViewController.swift */; };
 		51C93429232A2E8700A74B55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51C93428232A2E8700A74B55 /* Assets.xcassets */; };
@@ -14,6 +19,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		511845D023573F1F000FB5D9 /* DetailsViewControllerLFSR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewControllerLFSR.swift; sourceTree = "<group>"; };
+		511845D123573F1F000FB5D9 /* DetailsViewControllerLFSR.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsViewControllerLFSR.xib; sourceTree = "<group>"; };
+		511845D423574A9F000FB5D9 /* DetailsViewControllerGeffe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewControllerGeffe.swift; sourceTree = "<group>"; };
+		511845D823574B36000FB5D9 /* DetailsViewControllerGeffe.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsViewControllerGeffe.xib; sourceTree = "<group>"; };
+		511845DA23576218000FB5D9 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		51C93421232A2E8700A74B55 /* ToI_L1-2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ToI_L1-2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		51C93424232A2E8700A74B55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		51C93426232A2E8700A74B55 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -53,10 +63,15 @@
 		51C93423232A2E8700A74B55 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				51C93424232A2E8700A74B55 /* AppDelegate.swift */,
 				51C93426232A2E8700A74B55 /* ViewController.swift */,
-				51C93428232A2E8700A74B55 /* Assets.xcassets */,
 				51C9342A232A2E8700A74B55 /* Main.storyboard */,
+				511845D023573F1F000FB5D9 /* DetailsViewControllerLFSR.swift */,
+				511845D123573F1F000FB5D9 /* DetailsViewControllerLFSR.xib */,
+				511845D423574A9F000FB5D9 /* DetailsViewControllerGeffe.swift */,
+				511845D823574B36000FB5D9 /* DetailsViewControllerGeffe.xib */,
+				511845DA23576218000FB5D9 /* Keys.swift */,
+				51C93424232A2E8700A74B55 /* AppDelegate.swift */,
+				51C93428232A2E8700A74B55 /* Assets.xcassets */,
 				51C9342E232A2E8700A74B55 /* ToI_L1-2.entitlements */,
 				51C9342D232A2E8700A74B55 /* Info.plist */,
 			);
@@ -127,7 +142,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				51C93429232A2E8700A74B55 /* Assets.xcassets in Resources */,
+				511845D923574BA6000FB5D9 /* DetailsViewControllerGeffe.xib in Resources */,
 				51C9342C232A2E8700A74B55 /* Main.storyboard in Resources */,
+				511845D323573F1F000FB5D9 /* DetailsViewControllerLFSR.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,7 +156,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				51C93427232A2E8700A74B55 /* ViewController.swift in Sources */,
+				511845D223573F1F000FB5D9 /* DetailsViewControllerLFSR.swift in Sources */,
+				511845D623574A9F000FB5D9 /* DetailsViewControllerGeffe.swift in Sources */,
 				51C93425232A2E8700A74B55 /* AppDelegate.swift in Sources */,
+				511845DB23576218000FB5D9 /* Keys.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

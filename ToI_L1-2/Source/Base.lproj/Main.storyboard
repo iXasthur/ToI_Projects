@@ -553,6 +553,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="detailsAction:" target="XfG-lQ-9wD" id="yfe-xe-ewr"/>
+                                </connections>
                             </button>
                         </subviews>
                         <constraints>
