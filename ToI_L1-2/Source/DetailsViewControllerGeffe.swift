@@ -73,6 +73,7 @@ class DetailsViewControllerGeffe: NSViewController {
         })
         Geffe_TF.stringValue = str
         
+        let adjustedLength: Int = str.count
         str = ""
         a3 = CodeTFs[LFSRDictKeys.One] ?? []
         a3.forEach({ (el) in
@@ -108,6 +109,13 @@ class DetailsViewControllerGeffe: NSViewController {
             str.append(appStr)
         })
         LFSR3_TF.stringValue = str
+        
+        if LFSR1_TF.stringValue.count > adjustedLength {
+            let countToRemove: Int = LFSR1_TF.stringValue.count - adjustedLength
+            LFSR1_TF.stringValue.removeLast(countToRemove)
+            LFSR2_TF.stringValue.removeLast(countToRemove)
+            LFSR3_TF.stringValue.removeLast(countToRemove)
+        }
     }
     
     override func viewDidAppear() {

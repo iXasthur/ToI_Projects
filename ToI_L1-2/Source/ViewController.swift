@@ -602,6 +602,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         dialog.allowsMultipleSelection = false
         
         if dialog.runModal() == .OK {
+            detailsLFSR = DetailsViewControllerLFSR()
+            detailsGeffe = DetailsViewControllerGeffe()
+            
             if dialog.url != nil {
                 let ext = dialog.url?.pathExtension
                 lastDirectoryURL = dialog.directoryURL
@@ -949,8 +952,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         prepareUI()
         
-        detailsLFSR = DetailsViewControllerLFSR()
-        detailsGeffe = DetailsViewControllerGeffe()
 //        debugDetailsLFSR()
 //        debugDetailsGeffe()
     }
