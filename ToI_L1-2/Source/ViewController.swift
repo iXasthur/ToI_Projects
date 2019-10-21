@@ -391,7 +391,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private func LFSRGetXorV(regCondition: inout UInt64, bitsToXor: [Int], pPow: Int) -> UInt8 {
         var xor: UInt64
         for _ in 0...7 {
-            xor = ((regCondition >> bitsToXor[0]) & 1)^((regCondition >> bitsToXor[1]) & 1)
+            xor = 0
+            bitsToXor.forEach { (bitPos) in
+                xor = xor^((regCondition >> bitPos) & 1)
+            }
             regCondition = regCondition << 1
             regCondition = regCondition + xor
         }
