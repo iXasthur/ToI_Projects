@@ -49,6 +49,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             if dialog.url != nil {
                 initialFileURL = dialog.url
                 outputFileURL = nil
+                InitialFile_Label.stringValue = "Initial File: \(initialFileURL!.lastPathComponent)"
+                ShowInitialFile_Button.isHidden = false
+                OutputFile_Label.stringValue = "Output File: nil"
+                ShowOutputFile_Button.isHidden = true
                 resetUI()
             } else {
                 print("Error opening file")
@@ -288,7 +292,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         // Do any additional setup after loading the view.
         setupDelegates()
         prepareUI()
-        resetUI()
+//        resetUI()
     }
     
     private func setupDelegates() {
@@ -332,9 +336,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         Encrypt_Button.isEnabled = false
         Decrypt_Button.isEnabled = false
-        
-        ShowOutputFile_Button.isHidden = true
-        ShowInitialFile_Button.isHidden = false
     }
 
     override var representedObject: Any? {
