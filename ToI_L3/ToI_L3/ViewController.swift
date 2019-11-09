@@ -16,7 +16,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
     
-    private let maxInputSize: Int = 19
+    private let maxInputSize: Int = String(UInt64.Magnitude.max).count-1
     
     @IBOutlet weak var Encrypt_Button: NSButton!
     @IBOutlet weak var Decrypt_Button: NSButton!
@@ -165,7 +165,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
+        for i:Int64 in 1...20 {
+            print("\(i):",getPrimitiveRoots(of: i))
+        }
         setupDelegates()
         prepareUI()
     }
