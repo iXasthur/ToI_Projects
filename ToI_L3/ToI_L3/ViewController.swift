@@ -17,6 +17,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
     
     private let maxInputSize: Int = String(UInt64.Magnitude.max).count-1
+    private let P_LowestAllowedValue: UInt64 = 255
+    
+    private var initialFileURL: URL? = nil
+    private var outputFileURL: URL? = nil
     
     @IBOutlet weak var Encrypt_Button: NSButton!
     @IBOutlet weak var Decrypt_Button: NSButton!
@@ -43,8 +47,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         if dialog.runModal() == .OK {
             if dialog.url != nil {
-                
-                
+                initialFileURL = dialog.url
+                outputFileURL = nil
+                resetUI()
             } else {
                 print("Error opening file")
             }
@@ -52,6 +57,61 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             print("Closed openDocument dialog")
         }
         
+    }
+    
+    private func check_PValue(value: UInt64?, TF:NSTextField) -> Bool {
+        var ret: Bool = true
+        if value != nil {
+            if euler64(of: value!)==value!-1{
+                if value!>P_LowestAllowedValue{
+                    TF.textColor = .green
+                } else {
+                    TF.textColor = .yellow
+                }
+            } else {
+                TF.textColor = .red
+                ret = false
+            }
+        }
+        return ret
+    }
+    
+    private func check_XValue(value: UInt64?, P_Value:UInt64?, TF:NSTextField) -> Bool {
+        var ret: Bool = false
+        if value != nil && P_Value != nil {
+            if value! > 1 && value! < P_Value!-1 {
+                TF.textColor = .green
+                ret = true
+            } else {
+                TF.textColor = .red
+            }
+        } else {
+            TF.textColor = .red
+        }
+        return ret
+    }
+    
+    private func check_KValue(value: UInt64?, P_Value:UInt64?, TF:NSTextField) -> Bool {
+        var ret: Bool = false
+        if value != nil && P_Value != nil {
+            if value! > 1 && value! < P_Value!-1 && fast_mod64(value: value!, power: euler64(of: P_Value!-1), mod: P_Value!-1) == 1 {
+                TF.textColor = .green
+                ret = true
+            } else {
+                TF.textColor = .red
+            }
+        } else {
+            TF.textColor = .red
+        }
+        return ret
+    }
+    
+    private func check_GValue(value: UInt64?) -> Bool {
+        var ret: Bool = false
+        if value != nil {
+            ret = true
+        }
+        return ret
     }
     
     @IBAction func initiateElGamalAlgorithm(_ sender: Any) {
@@ -62,7 +122,30 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         switch button.identifier {
         case Encrypt_Button.identifier:
             print("Encryption button tapped")
+            var check: Bool = true
+            let P_Value: UInt64? = UInt64(P_TextField.stringValue)
+            let X_Value: UInt64? = UInt64(X_TextField.stringValue)
+            let K_Value: UInt64? = UInt64(K_TextField.stringValue)
+            let G_Value: UInt64? = UInt64(G_PopUpButton.titleOfSelectedItem ?? "")
             
+            // P_Value was checked while generation of G Values
+            // Problem with G also means problem with P
+            if P_Value != nil && P_Value!<=P_LowestAllowedValue {
+                check = false
+            }
+            // Functions must be called first
+            check = check_XValue(value: X_Value, P_Value: P_Value, TF: X_TextField) && check
+            check = check_KValue(value: K_Value, P_Value: P_Value, TF: K_TextField) && check
+            check = check_GValue(value: G_Value) && check
+            if check {
+                print("Initiating encryption")
+                print("P:",P_Value!)
+                print("X:",X_Value!)
+                print("K:",K_Value!)
+                print("G:",G_Value!)
+                
+                
+            }
         case Decrypt_Button.identifier:
             print("Decryption button tapped")
             
@@ -84,7 +167,21 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         if button.identifier == GGen_Button.identifier {
             print("Generate G values button tapped")
-            
+            G_PopUpButton.removeAllItems()
+            let P: UInt64? = UInt64(P_TextField.stringValue)
+            if check_PValue(value: P, TF: P_TextField) {
+                let GValuesInt: [UInt64] = getPrimitiveRoots(of: P ?? 0)
+                GValuesInt.forEach { (item) in
+                    G_PopUpButton.addItem(withTitle: String(item))
+                }
+                
+                if GValuesInt.count > 0 {
+                    Encrypt_Button.isEnabled = true
+                    Decrypt_Button.isEnabled = true
+                }
+                
+                GCount_Label.stringValue = "Count: \(GValuesInt.count)"
+            }
         } else {
             print("> Invalid button in func generateGValues()!")
             print("> NSButton:    \(button)")
@@ -139,18 +236,42 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             return
         }
         
-//        if textField.stringValue.count > maxInputSize {
-//            textField.stringValue.removeLast()
-//        }
-//        textField.stringValue = textField.stringValue.filter{inputAlphabetString.contains($0)}
-        
         switch textField.identifier {
         case P_TextField.identifier:
             print("Edited P_TextField")
+            
+            print("Cleared G_PopUpButton values")
+            G_PopUpButton.removeAllItems()
+            GCount_Label.stringValue = "Count: 0"
+            
+            print("Disabled Encrypt_Button and Decrypt_Button")
+            Encrypt_Button.isEnabled = false
+            Decrypt_Button.isEnabled = false
+            
+            textField.textColor = .white
+            
+            if textField.stringValue.count > maxInputSize {
+                textField.stringValue.removeLast()
+            }
+            textField.stringValue = textField.stringValue.filter{inputAlphabetString.contains($0)}
         case X_TextField.identifier:
             print("Edited X_TextField")
+            
+            textField.textColor = .white
+            
+            if textField.stringValue.count > maxInputSize {
+                textField.stringValue.removeLast()
+            }
+            textField.stringValue = textField.stringValue.filter{inputAlphabetString.contains($0)}
         case K_TextField.identifier:
             print("Edited K_TextField")
+            
+            textField.textColor = .white
+            
+            if textField.stringValue.count > maxInputSize {
+                textField.stringValue.removeLast()
+            }
+            textField.stringValue = textField.stringValue.filter{inputAlphabetString.contains($0)}
         default:
             print("> Invalid TextField in func controlTextDidChange()!")
             print("> NSTextField: \(textField)")
@@ -165,11 +286,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        for i:Int64 in 1...20 {
-            print("\(i):",getPrimitiveRoots(of: i))
-        }
         setupDelegates()
         prepareUI()
+        resetUI()
     }
     
     private func setupDelegates() {
@@ -194,6 +313,28 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         ShowOutputFile_Button.isHidden = true
         ShowInitialFile_Button.isHidden = true
+    }
+    
+    private func resetUI() {
+        P_TextField.isEnabled = true
+        X_TextField.isEnabled = true
+        K_TextField.isEnabled = true
+        
+        P_TextField.stringValue = ""
+        X_TextField.stringValue = ""
+        K_TextField.stringValue = ""
+        
+        G_PopUpButton.removeAllItems()
+        G_PopUpButton.isEnabled = true
+        
+        GGen_Button.isEnabled = true
+        GCount_Label.isHidden = false
+        
+        Encrypt_Button.isEnabled = false
+        Decrypt_Button.isEnabled = false
+        
+        ShowOutputFile_Button.isHidden = true
+        ShowInitialFile_Button.isHidden = false
     }
 
     override var representedObject: Any? {
