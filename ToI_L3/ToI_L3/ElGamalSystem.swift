@@ -84,7 +84,7 @@ func getPrimitiveRoots(of v: UInt64) -> [UInt64]{
     return buffArr
 }
 
-func ui64toArr8(v: UInt64) -> [UInt8]{
+func UI64toArr8(v: UInt64) -> [UInt8]{
     var ret: [UInt8] = Array(repeating: 0, count: 8)
     let _v: UInt64 = v.bigEndian
     let byte64: UInt64 = 255
@@ -94,12 +94,23 @@ func ui64toArr8(v: UInt64) -> [UInt8]{
     return ret
 }
 
+func Arr8toUI64(arr: [UInt8]) -> UInt64? {
+    var ret: UInt64? = nil
+    if arr.count == 8 {
+        ret = 0
+        let data = NSData(bytes: arr, length: 8)
+        data.getBytes(&ret, length: 8)
+        ret = UInt64(bigEndian: ret!)
+    }
+    return ret
+}
+
 func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: URL) -> URL?{
     var outputURL: URL? = nil
     let Y: UInt64 = fast_mod64(value: G, power: X, mod: P)
     let YK64_MODP: UInt64 = fast_mod64(value: Y, power: K, mod: P)
     let A: UInt64 = fast_mod64(value: G, power: K, mod: P)
-    let ABytes: [UInt8] = ui64toArr8(v: A)
+    let ABytes: [UInt8] = UI64toArr8(v: A)
     
     if let data: NSData = NSData(contentsOf: FILE_URL) {
         let dataToAppend: NSMutableData = NSMutableData()
@@ -126,7 +137,7 @@ func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: U
             for i in 0...currentBlockSize-1 {
                 var buffData: Data = Data(ABytes)
                 let B: UInt64 = (YK64_MODP*UInt64(buffer[i]))%P
-                buffData.append(Data(ui64toArr8(v: B)))
+                buffData.append(Data(UI64toArr8(v: B)))
                 dataToAppend.append(buffData)
             }
             
@@ -146,6 +157,89 @@ func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: U
         let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
         var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
         buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_enc(EG)").appendingPathExtension(fileExtention)
+        outputURL = buffOutputURL
+        
+        do {
+            try dataToAppend.write(to: outputURL!, options: .atomic)
+        } catch let err {
+            print("Error writing data to \(outputURL!)")
+            print(err)
+        }
+        
+    }
+    
+    return outputURL
+}
+
+func getInitialSymbolFromAB(A: UInt64, B: UInt64, P: UInt64, X: UInt64) -> UInt64{
+    return ((B%P)*(fast_mod64(value: A, power: X*(euler64(of: P)-1), mod: P)))%P
+}
+
+func checkDecryptionFile(FILE_URL: URL) -> Bool {
+    var ret = false
+    if let data: NSData = NSData(contentsOf: FILE_URL) {
+        if data.length%16 == 0 {
+            ret = true
+        }
+    }
+    return ret
+}
+
+func ElGamalDecryption64(P: UInt64, X: UInt64, FILE_URL: URL) -> URL?{
+    var outputURL: URL? = nil
+    if let data: NSData = NSData(contentsOf: FILE_URL) {
+        let dataToAppend: NSMutableData = NSMutableData()
+        let blockSize: Int = 65536 // 64KB
+        
+        var bytesLeft:Int = data.length
+        var locationToReadFrom:Int = 0
+        var currentBlockSize: Int = 0
+        
+        if bytesLeft<blockSize {
+            currentBlockSize = bytesLeft
+            bytesLeft = 0
+        } else {
+            currentBlockSize = blockSize
+            bytesLeft = bytesLeft - blockSize
+        }
+        
+        while currentBlockSize > 0 {
+            var buffer:[UInt8] = Array(repeating: 0, count: currentBlockSize)
+            data.getBytes(&buffer, range: NSRange(location: locationToReadFrom, length: currentBlockSize))
+            
+            // DECRYPYION START
+            print("Decrypting \(currentBlockSize) bytes")
+            let ABBlockCount: Int = currentBlockSize/16
+            var buffByteOutput: [UInt8] = Array(repeating: 0, count: ABBlockCount)
+            for i in 0...ABBlockCount-1 {
+                let pos: Int = i*16
+                let ABytes: [UInt8] = Array(buffer[pos...pos+7])
+                let BBytes: [UInt8] = Array(buffer[pos+8...pos+15])
+                let A: UInt64 = Arr8toUI64(arr: ABytes)!
+                let B: UInt64 = Arr8toUI64(arr: BBytes)!
+                let M: UInt64 = getInitialSymbolFromAB(A: A, B: B, P: P, X: X)
+                let byte64: UInt64 = 255
+                buffByteOutput[i] = UInt8(M&byte64)
+            }
+            
+            dataToAppend.append(Data(buffByteOutput))
+            
+            if bytesLeft<blockSize{
+                locationToReadFrom = locationToReadFrom + currentBlockSize
+                currentBlockSize = bytesLeft
+                bytesLeft = 0
+            } else {
+                locationToReadFrom = locationToReadFrom + currentBlockSize
+                currentBlockSize = blockSize
+                bytesLeft = bytesLeft - blockSize
+            }
+        }
+        
+        // Generating outputURL
+        let fileExtention: String = FILE_URL.pathExtension
+        let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
+        var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
+        buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_dec(EG)").appendingPathExtension(fileExtention)
         outputURL = buffOutputURL
         
         do {

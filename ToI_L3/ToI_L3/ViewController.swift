@@ -16,7 +16,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     private let ruAlphabetString: String = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     private let enAlphabetString: String = "abcdefghijklmnopqrstuvwxyz"
     
-    private let maxInputSize: Int = String(UInt64.Magnitude.max).count-1
+    private let maxInputSize: Int = String(Int64.Magnitude.max).count-1
     private let P_LowestAllowedValue: UInt64 = 255
     
     private var initialFileURL: URL? = nil
@@ -63,7 +63,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
     }
     
-    private func check_PValue(value: UInt64?, TF:NSTextField) -> Bool {
+    private func check_PValue_GGen(value: UInt64?, TF:NSTextField) -> Bool {
         var ret: Bool = true
         if value != nil {
             if euler64(of: value!)==value!-1{
@@ -75,6 +75,23 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             } else {
                 TF.textColor = .red
                 ret = false
+            }
+        }
+        return ret
+    }
+    
+    private func check_PValue(value: UInt64?, TF:NSTextField) -> Bool {
+        var ret: Bool = false
+        if value != nil {
+            if euler64(of: value!)==value!-1{
+                if value!>P_LowestAllowedValue{
+                    TF.textColor = .green
+                    ret = true
+                } else {
+                    TF.textColor = .yellow
+                }
+            } else {
+                TF.textColor = .red
             }
         }
         return ret
@@ -132,12 +149,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             let K_Value: UInt64? = UInt64(K_TextField.stringValue)
             let G_Value: UInt64? = UInt64(G_PopUpButton.titleOfSelectedItem ?? "")
             
-            // P_Value was checked while generation of G Values
-            // Problem with G also means problem with P
-            if P_Value != nil && P_Value!<=P_LowestAllowedValue {
-                check = false
-            }
             // Functions must be called first
+            check = check_PValue(value: P_Value, TF: P_TextField) && check
             check = check_XValue(value: X_Value, P_Value: P_Value, TF: X_TextField) && check
             check = check_KValue(value: K_Value, P_Value: P_Value, TF: K_TextField) && check
             check = check_GValue(value: G_Value) && check
@@ -159,7 +172,31 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             }
         case Decrypt_Button.identifier:
             print("Decryption button tapped")
+            var check: Bool = true
+            let P_Value: UInt64? = UInt64(P_TextField.stringValue)
+            let X_Value: UInt64? = UInt64(X_TextField.stringValue)
             
+            check = check_PValue(value: P_Value, TF: P_TextField) && check
+            check = check_XValue(value: X_Value, P_Value: P_Value, TF: X_TextField) && check
+            
+            if check {
+                print("Initiating decryption")
+                print("P:",P_Value!)
+                print("X:",X_Value!)
+                if initialFileURL != nil {
+                    if checkDecryptionFile(FILE_URL: initialFileURL!) {
+                        outputFileURL = ElGamalDecryption64(P: P_Value!, X: X_Value!, FILE_URL: initialFileURL!)
+                        if outputFileURL != nil {
+                            OutputFile_Label.stringValue = "Output File: \(outputFileURL!.lastPathComponent)"
+                            ShowOutputFile_Button.isHidden = false
+                        }
+                    } else {
+                        print("Invalid file to decrypt")
+                    }
+                } else {
+                    print("Invalid initial file URL")
+                }
+            }
         default:
             print("> Invalid button in func initiateElGamalAlgorithm()!")
             print("> NSButton:    \(button)")
@@ -180,7 +217,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             print("Generate G values button tapped")
             G_PopUpButton.removeAllItems()
             let P: UInt64? = UInt64(P_TextField.stringValue)
-            if check_PValue(value: P, TF: P_TextField) {
+            if check_PValue_GGen(value: P, TF: P_TextField) {
                 let GValuesInt: [UInt64] = getPrimitiveRoots(of: P ?? 0)
                 GValuesInt.forEach { (item) in
                     G_PopUpButton.addItem(withTitle: String(item))
