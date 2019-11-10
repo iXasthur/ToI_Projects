@@ -420,11 +420,16 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension(fileURL.pathExtension)
             activeResultFileURL = url
             
+            do {
+                try "".write(to: url, atomically: true, encoding: .utf8)
+            } catch _ {
+                
+            }
+            
             var bytesLeft:Int = data.length
             var locationToReadFrom:Int = 0
             var currentBlockSize: Int = 0
             
-            let dataToAppend: NSMutableData = NSMutableData()
             
             if bytesLeft<blockSizeByteValue {
                 currentBlockSize = bytesLeft
@@ -441,7 +446,15 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                     buffer[i] = buffer[i]^LFSRGetXorV(regCondition: &regCondition, bitsToXor: bitsToXor, pPow: pPow)
                 }
                 
-                dataToAppend.append(Data(buffer))
+                do {
+                    let FH = try FileHandle(forWritingTo: url)
+                    FH.seekToEndOfFile()
+                    FH.write(Data(buffer))
+                    FH.closeFile()
+                } catch let err {
+                    print("Error appending to file \(url)")
+                    print(err)
+                }
                 
                 if bytesLeft<blockSizeByteValue{
                     locationToReadFrom = locationToReadFrom + currentBlockSize
@@ -454,11 +467,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 }
             }
             
-            do {
-                try dataToAppend.write(to: url, options: .atomic)
-            } catch _ {
-                
-            }
         } else {
             print("-> Error getting data form \(fileURL)")
         }
@@ -496,10 +504,15 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             let url: URL = lastDirectoryURL!.appendingPathComponent(lastFileName!+affix).appendingPathExtension(fileURL.pathExtension)
             activeResultFileURL = url
             
+            do {
+                try "".write(to: url, atomically: true, encoding: .utf8)
+            } catch _ {
+                
+            }
+            
             var bytesLeft:Int = data.length
             var locationToReadFrom:Int = 0
             var currentBlockSize: Int = 0
-            let dataToAppend: NSMutableData = NSMutableData()
             
             if bytesLeft<blockSizeByteValue {
                 currentBlockSize = bytesLeft
@@ -520,7 +533,15 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                     buffer[i] = buffer[i]^((xorV1 & xorV2) | (~xorV1 & xorV3))
                 }
                 
-                dataToAppend.append(Data(buffer))
+                do {
+                    let FH = try FileHandle(forWritingTo: url)
+                    FH.seekToEndOfFile()
+                    FH.write(Data(buffer))
+                    FH.closeFile()
+                } catch let err {
+                    print("Error appending to file \(url)")
+                    print(err)
+                }
                 
                 if bytesLeft<blockSizeByteValue{
                     locationToReadFrom = locationToReadFrom + currentBlockSize
@@ -532,12 +553,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                     bytesLeft = bytesLeft - blockSizeByteValue
                 }
             }
-                          
-            do {
-                try dataToAppend.write(to: url, options: .atomic)
-            } catch _ {
             
-            }
         } else {
             print("-> Error getting data form \(fileURL)")
         }
