@@ -84,8 +84,23 @@ func getPrimitiveRoots(of v: UInt64) -> [UInt64]{
     return buffArr
 }
 
-func ElGamalEncryption(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: URL) -> URL?{
+func ui64toArr8(v: UInt64) -> [UInt8]{
+    var ret: [UInt8] = Array(repeating: 0, count: 8)
+    let _v: UInt64 = v.bigEndian
+    let byte64: UInt64 = 255
+    for i in (0...7) {
+        ret[i] = UInt8((_v >> (i*8))&byte64)
+    }
+    return ret
+}
+
+func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: URL) -> URL?{
     var outputURL: URL? = nil
+    let Y: UInt64 = fast_mod64(value: G, power: X, mod: P)
+    let YK64_MODP: UInt64 = fast_mod64(value: Y, power: K, mod: P)
+    let A: UInt64 = fast_mod64(value: G, power: K, mod: P)
+    let ABytes: [UInt8] = ui64toArr8(v: A)
+    
     if let data: NSData = NSData(contentsOf: FILE_URL) {
         let dataToAppend: NSMutableData = NSMutableData()
         let blockSize: Int = 65536 // 64KB
@@ -108,8 +123,12 @@ func ElGamalEncryption(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: URL
             
             // ECRYPYION START
             print("Encrypting \(currentBlockSize) bytes")
-            
-            dataToAppend.append(Data(buffer))
+            for i in 0...currentBlockSize-1 {
+                var buffData: Data = Data(ABytes)
+                let B: UInt64 = (YK64_MODP*UInt64(buffer[i]))%P
+                buffData.append(Data(ui64toArr8(v: B)))
+                dataToAppend.append(buffData)
+            }
             
             if bytesLeft<blockSize{
                 locationToReadFrom = locationToReadFrom + currentBlockSize
@@ -120,6 +139,20 @@ func ElGamalEncryption(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: URL
                 currentBlockSize = blockSize
                 bytesLeft = bytesLeft - blockSize
             }
+        }
+        
+        // Generating outputURL
+        let fileExtention: String = FILE_URL.pathExtension
+        let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
+        var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
+        buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_enc(EG)").appendingPathExtension(fileExtention)
+        outputURL = buffOutputURL
+        
+        do {
+            try dataToAppend.write(to: outputURL!, options: .atomic)
+        } catch let err {
+            print("Error writing data to \(outputURL!)")
+            print(err)
         }
         
     }

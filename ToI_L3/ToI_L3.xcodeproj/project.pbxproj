@@ -12,6 +12,7 @@
 		512E7490237450EE0076C52A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E748F237450EE0076C52A /* ViewController.swift */; };
 		512E7492237450EF0076C52A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 512E7491237450EF0076C52A /* Assets.xcassets */; };
 		512E7495237450EF0076C52A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 512E7493237450EF0076C52A /* Main.storyboard */; };
+		51CF2A8F23787D77007AF13A /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51CF2A8E23787D77007AF13A /* GameKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		512E7494237450EF0076C52A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		512E7496237450EF0076C52A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		512E7497237450EF0076C52A /* ToI_L3.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToI_L3.entitlements; sourceTree = "<group>"; };
+		51CF2A8E23787D77007AF13A /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51CF2A8F23787D77007AF13A /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +44,7 @@
 			children = (
 				512E748C237450EE0076C52A /* ToI_L3 */,
 				512E748B237450EE0076C52A /* Products */,
+				51CF2A8D23787D77007AF13A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +68,14 @@
 				512E7497237450EF0076C52A /* ToI_L3.entitlements */,
 			);
 			path = ToI_L3;
+			sourceTree = "<group>";
+		};
+		51CF2A8D23787D77007AF13A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				51CF2A8E23787D77007AF13A /* GameKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -274,10 +286,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ToI_L3/ToI_L3.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2RFRHVPMQL;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = ToI_L3/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -294,10 +307,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ToI_L3/ToI_L3.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2RFRHVPMQL;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = ToI_L3/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
