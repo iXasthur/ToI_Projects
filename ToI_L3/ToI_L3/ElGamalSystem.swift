@@ -113,12 +113,24 @@ func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: U
     let ABytes: [UInt8] = UI64toArr8(v: A)
     
     if let data: NSData = NSData(contentsOf: FILE_URL) {
-        let dataToAppend: NSMutableData = NSMutableData()
         let blockSize: Int = 65536 // 64KB
         
         var bytesLeft:Int = data.length
         var locationToReadFrom:Int = 0
         var currentBlockSize: Int = 0
+        
+        // Generating outputURL
+        let fileExtention: String = FILE_URL.pathExtension
+        let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
+        var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
+        buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_enc(EG)").appendingPathExtension(fileExtention)
+        outputURL = buffOutputURL
+        
+        do {
+            try "".write(to: outputURL!, atomically: true, encoding: .utf8)
+        } catch _ {
+            
+        }
         
         if bytesLeft<blockSize {
             currentBlockSize = bytesLeft
@@ -138,7 +150,16 @@ func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: U
                 var buffData: Data = Data(ABytes)
                 let B: UInt64 = (YK64_MODP*UInt64(buffer[i]))%P
                 buffData.append(Data(UI64toArr8(v: B)))
-                dataToAppend.append(buffData)
+                
+                do {
+                    let FH = try FileHandle(forWritingTo: outputURL!)
+                    FH.seekToEndOfFile()
+                    FH.write(buffData)
+                    FH.closeFile()
+                } catch let err {
+                    print("Error appending to file \(outputURL!)")
+                    print(err)
+                }
             }
             
             if bytesLeft<blockSize{
@@ -150,20 +171,6 @@ func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: U
                 currentBlockSize = blockSize
                 bytesLeft = bytesLeft - blockSize
             }
-        }
-        
-        // Generating outputURL
-        let fileExtention: String = FILE_URL.pathExtension
-        let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
-        var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
-        buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_enc(EG)").appendingPathExtension(fileExtention)
-        outputURL = buffOutputURL
-        
-        do {
-            try dataToAppend.write(to: outputURL!, options: .atomic)
-        } catch let err {
-            print("Error writing data to \(outputURL!)")
-            print(err)
         }
         
     }
@@ -188,12 +195,24 @@ func checkDecryptionFile(FILE_URL: URL) -> Bool {
 func ElGamalDecryption64(P: UInt64, X: UInt64, FILE_URL: URL) -> URL?{
     var outputURL: URL? = nil
     if let data: NSData = NSData(contentsOf: FILE_URL) {
-        let dataToAppend: NSMutableData = NSMutableData()
         let blockSize: Int = 65536 // 64KB
         
         var bytesLeft:Int = data.length
         var locationToReadFrom:Int = 0
         var currentBlockSize: Int = 0
+        
+        // Generating outputURL
+        let fileExtention: String = FILE_URL.pathExtension
+        let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
+        var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
+        buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_dec(EG)").appendingPathExtension(fileExtention)
+        outputURL = buffOutputURL
+        
+        do {
+            try "".write(to: outputURL!, atomically: true, encoding: .utf8)
+        } catch _ {
+            
+        }
         
         if bytesLeft<blockSize {
             currentBlockSize = bytesLeft
@@ -222,7 +241,15 @@ func ElGamalDecryption64(P: UInt64, X: UInt64, FILE_URL: URL) -> URL?{
                 buffByteOutput[i] = UInt8(M&byte64)
             }
             
-            dataToAppend.append(Data(buffByteOutput))
+            do {
+                let FH = try FileHandle(forWritingTo: outputURL!)
+                FH.seekToEndOfFile()
+                FH.write(Data(buffByteOutput))
+                FH.closeFile()
+            } catch let err {
+                print("Error appending to file \(outputURL!)")
+                print(err)
+            }
             
             if bytesLeft<blockSize{
                 locationToReadFrom = locationToReadFrom + currentBlockSize
@@ -235,19 +262,6 @@ func ElGamalDecryption64(P: UInt64, X: UInt64, FILE_URL: URL) -> URL?{
             }
         }
         
-        // Generating outputURL
-        let fileExtention: String = FILE_URL.pathExtension
-        let fileName: String = FILE_URL.deletingPathExtension().lastPathComponent
-        var buffOutputURL: URL = FILE_URL.deletingLastPathComponent()
-        buffOutputURL = buffOutputURL.appendingPathComponent(fileName + "_dec(EG)").appendingPathExtension(fileExtention)
-        outputURL = buffOutputURL
-        
-        do {
-            try dataToAppend.write(to: outputURL!, options: .atomic)
-        } catch let err {
-            print("Error writing data to \(outputURL!)")
-            print(err)
-        }
         
     }
     
