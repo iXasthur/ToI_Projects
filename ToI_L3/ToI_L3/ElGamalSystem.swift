@@ -84,6 +84,49 @@ func getPrimitiveRoots(of v: UInt64) -> [UInt64]{
     return buffArr
 }
 
+func ElGamalEncryption(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: URL) -> URL?{
+    var outputURL: URL? = nil
+    if let data: NSData = NSData(contentsOf: FILE_URL) {
+        let dataToAppend: NSMutableData = NSMutableData()
+        let blockSize: Int = 65536 // 64KB
+        
+        var bytesLeft:Int = data.length
+        var locationToReadFrom:Int = 0
+        var currentBlockSize: Int = 0
+        
+        if bytesLeft<blockSize {
+            currentBlockSize = bytesLeft
+            bytesLeft = 0
+        } else {
+            currentBlockSize = blockSize
+            bytesLeft = bytesLeft - blockSize
+        }
+        
+        while currentBlockSize > 0 {
+            var buffer:[UInt8] = Array(repeating: 0, count: currentBlockSize)
+            data.getBytes(&buffer, range: NSRange(location: locationToReadFrom, length: currentBlockSize))
+            
+            // ECRYPYION START
+            print("Encrypting \(currentBlockSize) bytes")
+            
+            dataToAppend.append(Data(buffer))
+            
+            if bytesLeft<blockSize{
+                locationToReadFrom = locationToReadFrom + currentBlockSize
+                currentBlockSize = bytesLeft
+                bytesLeft = 0
+            } else {
+                locationToReadFrom = locationToReadFrom + currentBlockSize
+                currentBlockSize = blockSize
+                bytesLeft = bytesLeft - blockSize
+            }
+        }
+        
+    }
+    
+    return outputURL
+}
+
 //func euclid_ex64(a: Int64, b: Int64) -> Int64 {
 //    var d0: Int64 = a
 //    var d1: Int64 = b

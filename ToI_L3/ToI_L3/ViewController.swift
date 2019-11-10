@@ -147,8 +147,15 @@ class ViewController: NSViewController, NSTextFieldDelegate {
                 print("X:",X_Value!)
                 print("K:",K_Value!)
                 print("G:",G_Value!)
-                
-                
+                if initialFileURL != nil {
+                    outputFileURL = ElGamalEncryption(P: P_Value!,X: X_Value!,K: K_Value!,G: G_Value!,FILE_URL: initialFileURL!)
+                    if outputFileURL != nil {
+                        OutputFile_Label.stringValue = "Output File: \(outputFileURL!.lastPathComponent)"
+                        ShowOutputFile_Button.isHidden = false
+                    }
+                } else {
+                    print("Invalid initial file URL")
+                }
             }
         case Decrypt_Button.identifier:
             print("Decryption button tapped")
