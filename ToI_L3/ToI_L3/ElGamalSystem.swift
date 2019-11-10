@@ -146,20 +146,23 @@ func ElGamalEncryption64(P: UInt64, X: UInt64, K: UInt64, G: UInt64, FILE_URL: U
             
             // ECRYPYION START
             print("Encrypting \(currentBlockSize) bytes")
+            var buffByteOutput: [UInt8] = Array(repeating: 0, count: currentBlockSize*16)
             for i in 0...currentBlockSize-1 {
-                var buffData: Data = Data(ABytes)
+                let pos: Int = i*16
                 let B: UInt64 = (YK64_MODP*UInt64(buffer[i]))%P
-                buffData.append(Data(UI64toArr8(v: B)))
                 
-                do {
-                    let FH = try FileHandle(forWritingTo: outputURL!)
-                    FH.seekToEndOfFile()
-                    FH.write(buffData)
-                    FH.closeFile()
-                } catch let err {
-                    print("Error appending to file \(outputURL!)")
-                    print(err)
-                }
+                buffByteOutput.replaceSubrange(pos...pos+7, with: ABytes)
+                buffByteOutput.replaceSubrange(pos+8...pos+15, with: UI64toArr8(v: B))
+            }
+            
+            do {
+                let FH = try FileHandle(forWritingTo: outputURL!)
+                FH.seekToEndOfFile()
+                FH.write(Data(buffByteOutput))
+                FH.closeFile()
+            } catch let err {
+                print("Error appending to file \(outputURL!)")
+                print(err)
             }
             
             if bytesLeft<blockSize{
