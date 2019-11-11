@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="OutputViewController" customModule="ToI_L3" customModuleProvider="target">
+            <connections>
+                <outlet property="mainTF" destination="LMs-Tl-UYy" id="Oq4-vz-Cs6"/>
+                <outlet property="styleLabel" destination="Kkx-kE-Sdh" id="j7B-cr-tOV"/>
+                <outlet property="switchStyleButton" destination="sCD-ut-36r" id="A43-V9-TCz"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="421"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="LMs-Tl-UYy">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="365"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="375" id="iIz-2E-UYp"/>
+                        <constraint firstAttribute="height" constant="365" id="uNB-sC-MWS"/>
+                    </constraints>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" state="on" borderStyle="border" drawsBackground="YES" id="gde-BR-hsk">
+                        <font key="font" size="13" name="CourierNewPSMT"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kkx-kE-Sdh">
+                    <rect key="frame" x="20" y="385" width="74" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="STD STYLE" id="4Tu-SZ-5gk">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sCD-ut-36r">
+                    <rect key="frame" x="112" y="383" width="62" height="19"/>
+                    <buttonCell key="cell" type="roundRect" title="SWITCH" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kkg-ue-0bz">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="label" size="12"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="switchStringStyle:" target="-2" id="RJC-vc-JPQ"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="sCD-ut-36r" firstAttribute="leading" secondItem="Kkx-kE-Sdh" secondAttribute="trailing" constant="20" id="8OP-TQ-x3D"/>
+                <constraint firstAttribute="trailing" secondItem="LMs-Tl-UYy" secondAttribute="trailing" id="XEx-IS-cfE"/>
+                <constraint firstItem="sCD-ut-36r" firstAttribute="centerY" secondItem="Kkx-kE-Sdh" secondAttribute="centerY" id="Y7w-9U-WcZ"/>
+                <constraint firstItem="Kkx-kE-Sdh" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="hJd-SJ-0Xc"/>
+                <constraint firstAttribute="bottom" secondItem="LMs-Tl-UYy" secondAttribute="bottom" id="idV-9j-T41"/>
+                <constraint firstItem="LMs-Tl-UYy" firstAttribute="top" secondItem="Kkx-kE-Sdh" secondAttribute="bottom" constant="20" id="joC-m6-Lai"/>
+                <constraint firstItem="LMs-Tl-UYy" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="tLg-lb-y4v"/>
+                <constraint firstItem="Kkx-kE-Sdh" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="22" id="uvH-5E-hud"/>
+            </constraints>
+            <point key="canvasLocation" x="48.5" y="396"/>
+        </customView>
+    </objects>
+</document>

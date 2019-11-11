@@ -249,10 +249,24 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         switch button.identifier {
         case ShowInitialFile_Button.identifier:
             print("Show initial file button tapped")
-            
+            if initialFileURL != nil {
+                let outputVC: OutputViewController = OutputViewController()
+                outputVC.updateFileURL(_url: initialFileURL!)
+                outputVC.createStrings()
+                self.presentAsModalWindow(outputVC)
+            } else {
+                print("Unable to show file: initialFileURL is nil")
+            }
         case ShowOutputFile_Button.identifier:
             print("Show output file button tapped")
-            
+            if outputFileURL != nil {
+                let outputVC: OutputViewController = OutputViewController()
+                outputVC.updateFileURL(_url: outputFileURL!)
+                outputVC.createStrings()
+                self.presentAsModalWindow(outputVC)
+            } else {
+                print("Unable to show file: initialFileURL is nil")
+            }
         default:
             print("> Invalid Button in func showFileInDecimal()!")
             print("> NSButton:    \(button)")

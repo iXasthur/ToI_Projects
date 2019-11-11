@@ -12,6 +12,8 @@
 		512E7490237450EE0076C52A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E748F237450EE0076C52A /* ViewController.swift */; };
 		512E7492237450EF0076C52A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 512E7491237450EF0076C52A /* Assets.xcassets */; };
 		512E7495237450EF0076C52A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 512E7493237450EF0076C52A /* Main.storyboard */; };
+		516951312378B24C003A9AF5 /* OutputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5169512F2378B24C003A9AF5 /* OutputViewController.swift */; };
+		516951322378B24C003A9AF5 /* OutputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 516951302378B24C003A9AF5 /* OutputViewController.xib */; };
 		51CF2A8F23787D77007AF13A /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51CF2A8E23787D77007AF13A /* GameKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +26,8 @@
 		512E7494237450EF0076C52A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		512E7496237450EF0076C52A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		512E7497237450EF0076C52A /* ToI_L3.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToI_L3.entitlements; sourceTree = "<group>"; };
+		5169512F2378B24C003A9AF5 /* OutputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputViewController.swift; sourceTree = "<group>"; };
+		516951302378B24C003A9AF5 /* OutputViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OutputViewController.xib; sourceTree = "<group>"; };
 		51CF2A8E23787D77007AF13A /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -66,6 +70,8 @@
 				512E7493237450EF0076C52A /* Main.storyboard */,
 				512E7496237450EF0076C52A /* Info.plist */,
 				512E7497237450EF0076C52A /* ToI_L3.entitlements */,
+				5169512F2378B24C003A9AF5 /* OutputViewController.swift */,
+				516951302378B24C003A9AF5 /* OutputViewController.xib */,
 			);
 			path = ToI_L3;
 			sourceTree = "<group>";
@@ -137,6 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				512E7492237450EF0076C52A /* Assets.xcassets in Resources */,
+				516951322378B24C003A9AF5 /* OutputViewController.xib in Resources */,
 				512E7495237450EF0076C52A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				512E7490237450EE0076C52A /* ViewController.swift in Sources */,
+				516951312378B24C003A9AF5 /* OutputViewController.swift in Sources */,
 				512E748E237450EE0076C52A /* AppDelegate.swift in Sources */,
 				5121C3B02376E39B007098AD /* ElGamalSystem.swift in Sources */,
 			);
