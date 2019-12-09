@@ -14,6 +14,8 @@
 		51590881239E96C30038CE71 /* RSASignatureSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5159087C239E96C30038CE71 /* RSASignatureSystem.swift */; };
 		51590884239E96D30038CE71 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51590882239E96D30038CE71 /* Main.storyboard */; };
 		5178C223239D493400E88E47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5178C222239D493400E88E47 /* Assets.xcassets */; };
+		5180734F239EE4EB0014CB08 /* CheckDSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5180734D239EE4EB0014CB08 /* CheckDSViewController.swift */; };
+		51807350239EE4EB0014CB08 /* CheckDSViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5180734E239EE4EB0014CB08 /* CheckDSViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,8 @@
 		5178C222239D493400E88E47 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5178C227239D493400E88E47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5178C228239D493400E88E47 /* ToI_L4.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToI_L4.entitlements; sourceTree = "<group>"; };
+		5180734D239EE4EB0014CB08 /* CheckDSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckDSViewController.swift; sourceTree = "<group>"; };
+		5180734E239EE4EB0014CB08 /* CheckDSViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CheckDSViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,8 +66,10 @@
 				51590879239E96C30038CE71 /* AppDelegate.swift */,
 				5178C222239D493400E88E47 /* Assets.xcassets */,
 				51590882239E96D30038CE71 /* Main.storyboard */,
-				5159087A239E96C30038CE71 /* ViewController.swift */,
 				5159087C239E96C30038CE71 /* RSASignatureSystem.swift */,
+				5159087A239E96C30038CE71 /* ViewController.swift */,
+				5180734D239EE4EB0014CB08 /* CheckDSViewController.swift */,
+				5180734E239EE4EB0014CB08 /* CheckDSViewController.xib */,
 				5159087B239E96C30038CE71 /* OutputViewController.swift */,
 				51590878239E96C30038CE71 /* OutputViewController.xib */,
 				5178C227239D493400E88E47 /* Info.plist */,
@@ -133,6 +139,7 @@
 			files = (
 				51590884239E96D30038CE71 /* Main.storyboard in Resources */,
 				5178C223239D493400E88E47 /* Assets.xcassets in Resources */,
+				51807350239EE4EB0014CB08 /* CheckDSViewController.xib in Resources */,
 				5159087D239E96C30038CE71 /* OutputViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -144,6 +151,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5180734F239EE4EB0014CB08 /* CheckDSViewController.swift in Sources */,
 				5159087F239E96C30038CE71 /* ViewController.swift in Sources */,
 				51590880239E96C30038CE71 /* OutputViewController.swift in Sources */,
 				51590881239E96C30038CE71 /* RSASignatureSystem.swift in Sources */,

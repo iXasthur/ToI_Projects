@@ -5,9 +5,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="OutputViewController" customModule="ToI_L4" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="CheckDSViewController" customModule="ToI_L4" customModuleProvider="target">
             <connections>
-                <outlet property="styleLabel" destination="Kkx-kE-Sdh" id="j7B-cr-tOV"/>
+                <outlet property="mainTF" destination="LMs-Tl-UYy" id="Oq4-vz-Cs6"/>
+                <outlet property="stateLabel" destination="Kkx-kE-Sdh" id="rts-Dl-q9A"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -24,14 +25,14 @@
                         <constraint firstAttribute="height" constant="365" id="uNB-sC-MWS"/>
                     </constraints>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" state="on" borderStyle="border" drawsBackground="YES" id="gde-BR-hsk">
-                        <font key="font" size="13" name="CourierNewPSMT"/>
+                        <font key="font" size="17" name="CourierNewPSMT"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kkx-kE-Sdh">
-                    <rect key="frame" x="20" y="385" width="74" height="16"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="STD STYLE" id="4Tu-SZ-5gk">
+                    <rect key="frame" x="20" y="385" width="106" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="RSA SIGHATURE" id="4Tu-SZ-5gk">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

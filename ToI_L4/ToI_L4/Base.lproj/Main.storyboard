@@ -830,7 +830,7 @@
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EIr-YU-MVa">
                                 <rect key="frame" x="184" y="211" width="409" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="SIGNATURE" id="cZp-BC-NvA">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="-" id="cZp-BC-NvA">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -866,7 +866,7 @@
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GDt-kv-9Wb">
                                 <rect key="frame" x="184" y="185" width="409" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="HASH" id="yaN-C3-CAI">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="-" id="yaN-C3-CAI">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
