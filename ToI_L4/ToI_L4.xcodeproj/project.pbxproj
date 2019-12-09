@@ -7,18 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5178C21F239D493300E88E47 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5178C21E239D493300E88E47 /* AppDelegate.swift */; };
-		5178C221239D493300E88E47 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5178C220239D493300E88E47 /* ViewController.swift */; };
+		5159087D239E96C30038CE71 /* OutputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51590878239E96C30038CE71 /* OutputViewController.xib */; };
+		5159087E239E96C30038CE71 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51590879239E96C30038CE71 /* AppDelegate.swift */; };
+		5159087F239E96C30038CE71 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5159087A239E96C30038CE71 /* ViewController.swift */; };
+		51590880239E96C30038CE71 /* OutputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5159087B239E96C30038CE71 /* OutputViewController.swift */; };
+		51590881239E96C30038CE71 /* RSASignatureSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5159087C239E96C30038CE71 /* RSASignatureSystem.swift */; };
+		51590884239E96D30038CE71 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51590882239E96D30038CE71 /* Main.storyboard */; };
 		5178C223239D493400E88E47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5178C222239D493400E88E47 /* Assets.xcassets */; };
-		5178C226239D493400E88E47 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5178C224239D493400E88E47 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		51590878239E96C30038CE71 /* OutputViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OutputViewController.xib; sourceTree = "<group>"; };
+		51590879239E96C30038CE71 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5159087A239E96C30038CE71 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5159087B239E96C30038CE71 /* OutputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutputViewController.swift; sourceTree = "<group>"; };
+		5159087C239E96C30038CE71 /* RSASignatureSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSASignatureSystem.swift; sourceTree = "<group>"; };
+		51590883239E96D30038CE71 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5178C21B239D493300E88E47 /* ToI_L4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToI_L4.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5178C21E239D493300E88E47 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5178C220239D493300E88E47 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5178C222239D493400E88E47 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5178C225239D493400E88E47 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5178C227239D493400E88E47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5178C228239D493400E88E47 /* ToI_L4.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToI_L4.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,10 +59,13 @@
 		5178C21D239D493300E88E47 /* ToI_L4 */ = {
 			isa = PBXGroup;
 			children = (
-				5178C21E239D493300E88E47 /* AppDelegate.swift */,
-				5178C220239D493300E88E47 /* ViewController.swift */,
+				51590879239E96C30038CE71 /* AppDelegate.swift */,
 				5178C222239D493400E88E47 /* Assets.xcassets */,
-				5178C224239D493400E88E47 /* Main.storyboard */,
+				51590882239E96D30038CE71 /* Main.storyboard */,
+				5159087A239E96C30038CE71 /* ViewController.swift */,
+				5159087C239E96C30038CE71 /* RSASignatureSystem.swift */,
+				5159087B239E96C30038CE71 /* OutputViewController.swift */,
+				51590878239E96C30038CE71 /* OutputViewController.xib */,
 				5178C227239D493400E88E47 /* Info.plist */,
 				5178C228239D493400E88E47 /* ToI_L4.entitlements */,
 			);
@@ -95,6 +104,7 @@
 				TargetAttributes = {
 					5178C21A239D493300E88E47 = {
 						CreatedOnToolsVersion = 11.2.1;
+						LastSwiftMigration = 1120;
 					};
 				};
 			};
@@ -121,8 +131,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51590884239E96D30038CE71 /* Main.storyboard in Resources */,
 				5178C223239D493400E88E47 /* Assets.xcassets in Resources */,
-				5178C226239D493400E88E47 /* Main.storyboard in Resources */,
+				5159087D239E96C30038CE71 /* OutputViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,18 +144,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5178C221239D493300E88E47 /* ViewController.swift in Sources */,
-				5178C21F239D493300E88E47 /* AppDelegate.swift in Sources */,
+				5159087F239E96C30038CE71 /* ViewController.swift in Sources */,
+				51590880239E96C30038CE71 /* OutputViewController.swift in Sources */,
+				51590881239E96C30038CE71 /* RSASignatureSystem.swift in Sources */,
+				5159087E239E96C30038CE71 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		5178C224239D493400E88E47 /* Main.storyboard */ = {
+		51590882239E96D30038CE71 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5178C225239D493400E88E47 /* Base */,
+				51590883239E96D30038CE71 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -269,11 +282,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ToI_L4/ToI_L4.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2RFRHVPMQL;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = ToI_L4/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -281,6 +295,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Xcnk.ToI-L4";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -289,11 +304,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ToI_L4/ToI_L4.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2RFRHVPMQL;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = ToI_L4/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

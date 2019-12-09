@@ -1,9 +1,9 @@
 //
 //  AppDelegate.swift
-//  ToI_L4
+//  ToI_L3
 //
-//  Created by Михаил Ковалевский on 08.12.2019.
-//  Copyright © 2019 Михаил Ковалевский. All rights reserved.
+//  Created by Михаил Ковалевский on 07.11.2019.
+//  Copyright © 2019 Mikhail Kavaleuski. All rights reserved.
 //
 
 import Cocoa
@@ -11,7 +11,9 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
+    }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
